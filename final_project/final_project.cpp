@@ -14,22 +14,24 @@
 #include <math.h>
 #include <random>
 
+#include "camera/camera.h"
+
 static GLFWwindow *window;
 static void key_callback(GLFWwindow *window, int key, int scancode, int action, int mode);
-
-// OpenGL camera view parameters
-static glm::vec3 eye_center;
-static glm::vec3 lookat(0, 0, 0);
-static glm::vec3 up(0, 1, 0);
+static void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 
 // Random preset
 std::random_device rd;  
 std::mt19937 gen(rd()); 
 
 // View control 
-static float viewAzimuth = -M_PI/2;
-static float viewPolar = M_PI/2;
+static float viewAzimuth = 0;
+static float viewPolar = 0;
 static float viewDistance = 10.0f;
+
+// OpenGL camera view parameters
+float cameraSensitivity = 0.001f;
+Camera camera = Camera(viewAzimuth, viewPolar, viewDistance, cameraSensitivity);
 
 static GLuint LoadTextureTileBox(const char *texture_file_path) {
     int w, h, channels;
@@ -366,7 +368,9 @@ int main(void)
 
 	// Ensure we can capture the escape key being pressed below
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetKeyCallback(window, key_callback);
+	glfwSetCursorPosCallback(window, mouse_callback);
 
 	// Load OpenGL functions, gladLoadGL returns the loaded version, 0 on error.
 	int version = gladLoadGL(glfwGetProcAddress);
@@ -390,13 +394,6 @@ int main(void)
 
     // ---------------------------
 
-	// Camera setup
-    eye_center.y = viewDistance * cos(viewPolar);
-    eye_center.x = viewDistance * cos(viewAzimuth);
-    eye_center.z = viewDistance * sin(viewAzimuth);
-
-
-
 	glm::mat4 viewMatrix, projectionMatrix;
     glm::float32 FoV = 45;
 	glm::float32 zNear = 0.1f; 
@@ -407,8 +404,7 @@ int main(void)
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		viewMatrix = glm::lookAt(eye_center, lookat, up);
-		glm::mat4 vp = projectionMatrix * viewMatrix;
+		glm::mat4 vp = projectionMatrix * camera.getViewMatrix();
 
 		// Render the buildings
 		building.render(vp);
@@ -432,42 +428,9 @@ int main(void)
 // Is called whenever a key is pressed/released via GLFW
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mode)
 {
-	if (key == GLFW_KEY_R && action == GLFW_PRESS)
-	{
-		viewAzimuth = 0.f;
-		viewPolar = 0.f;
-		eye_center.y = viewDistance * cos(viewPolar);
-		eye_center.x = viewDistance * cos(viewAzimuth);
-		eye_center.z = viewDistance * sin(viewAzimuth);
-		std::cout << "Reset." << std::endl;
-	}
+	camera.onKeyPress(window, key, scancode, action, mode);
+}
 
-	if (key == GLFW_KEY_UP && (action == GLFW_REPEAT || action == GLFW_PRESS))
-	{
-		viewPolar -= 0.1f;
-		eye_center.y = viewDistance * cos(viewPolar);
-	}
-
-	if (key == GLFW_KEY_DOWN && (action == GLFW_REPEAT || action == GLFW_PRESS))
-	{
-		viewPolar += 0.1f;
-		eye_center.y = viewDistance * cos(viewPolar);
-	}
-
-	if (key == GLFW_KEY_LEFT && (action == GLFW_REPEAT || action == GLFW_PRESS))
-	{
-		viewAzimuth -= 0.1f;
-		eye_center.x = viewDistance * cos(viewAzimuth);
-		eye_center.z = viewDistance * sin(viewAzimuth);
-	}
-
-	if (key == GLFW_KEY_RIGHT && (action == GLFW_REPEAT || action == GLFW_PRESS))
-	{
-		viewAzimuth += 0.1f;
-		eye_center.x = viewDistance * cos(viewAzimuth);
-		eye_center.z = viewDistance * sin(viewAzimuth);
-	}
-
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-		glfwSetWindowShouldClose(window, GL_TRUE);
+void mouse_callback(GLFWwindow* window, double xpos, double ypos){
+	camera.onMouseChange(window, xpos, ypos);
 }

@@ -25,6 +25,7 @@ include_directories(
 add_executable(final_project
     final_project/final_project.cpp
     final_project/render/shader.cpp
+    final_project/camera/camera.cpp
 )
 
 target_link_libraries(final_project
