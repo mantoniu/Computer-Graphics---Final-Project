@@ -1,17 +1,11 @@
 #include <glad/gl.h>
 #include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-
-#include <render/shader.h>
-
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
-
-#include <vector>
 #include <iostream>
 #define _USE_MATH_DEFINES
-#include <math.h>
+#include <iomanip>
 #include <random>
 
 #include "Objects/skybox/SkyBox.h"
@@ -82,20 +76,42 @@ int main()
 
     // ---------------------------
 
-	glm::mat4 viewMatrix, projectionMatrix;
-    glm::float32 FoV = 45;
-	glm::float32 zNear = 0.1f; 
+	glm::float32 FoV = 45;
+	glm::float32 zNear = 0.1f;
 	glm::float32 zFar = 1000.0f;
-	projectionMatrix = glm::perspective(glm::radians(FoV), 4.0f / 3.0f, zNear, zFar);
+	glm::mat4 projectionMatrix = glm::perspective(glm::radians(FoV), 4.0f / 3.0f, zNear, zFar);
+
+	// Time and frame rate tracking
+	static double lastTime = glfwGetTime();
+	float fTime = 0.0f;			// Time for measuring fps
+	unsigned long frames = 0;
 
 	do
 	{
+		double currentTime = glfwGetTime();
+		auto deltaTime = static_cast<float>(currentTime - lastTime);
+		lastTime = currentTime;
+
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		glm::mat4 vp = projectionMatrix * camera.getViewMatrix();
 
 		// Render the buildings
 		skybox.render(vp);
+
+		// FPS tracking
+		// Count number of frames over a few seconds and take average
+		frames++;
+		fTime += deltaTime;
+		if (fTime > 2.0f) {
+			float fps = static_cast<float>(frames) / fTime;
+			frames = 0;
+			fTime = 0;
+
+			std::stringstream stream;
+			stream << std::fixed << std::setprecision(2) << "Lab 4 | Frames per second (FPS): " << fps;
+			glfwSetWindowTitle(window, stream.str().c_str());
+		}
 
 		// Swap buffers
 		glfwSwapBuffers(window);
@@ -116,7 +132,7 @@ int main()
 // Is called whenever a key is pressed/released via GLFW
 static void key_callback(GLFWwindow *window, int key, int scancode, int action, int mode)
 {
-	camera.onKeyPress(window, key, scancode, action, mode);
+	camera.onKeyPress(window);
 }
 
 static void mouse_callback(GLFWwindow* window, double xpos, double ypos){
