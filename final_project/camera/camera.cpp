@@ -22,11 +22,10 @@ glm::mat4 Camera::getViewMatrix(){
 }
 
 
-void Camera::onKeyPress(GLFWwindow *window, int key, int scancode, int action, int mode) {
+void Camera::onKeyPress(GLFWwindow *window) {
     const float moveSpeed = 0.5f;
-    glm::vec3 forward = glm::normalize(getLookat() - eyeCenter); 
-    glm::vec3 right = glm::normalize(glm::cross(forward, getUp())); 
-    glm::vec3 upDirection = glm::normalize(getUp()); 
+    glm::vec3 forward = normalize(getLookat() - eyeCenter);
+    glm::vec3 right = normalize(cross(forward, getUp()));
 
     if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
         eyeCenter = glm::vec3(0.0f, 0.0f, 10.0f);

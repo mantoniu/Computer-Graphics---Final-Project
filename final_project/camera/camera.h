@@ -18,7 +18,7 @@ class Camera{
         void updateEyeCenter();
     public:
         Camera(float viewAzimuth, float viewPolar, float viewDistance, float sensitivity);
-        void onKeyPress(GLFWwindow *window, int key, int scancode, int action, int mode);
+        void onKeyPress(GLFWwindow *window);
         void onMouseChange(GLFWwindow* window, double xpos, double ypos);
         glm::mat4 getViewMatrix();
         void updateViewAnglesFromEyePosition();

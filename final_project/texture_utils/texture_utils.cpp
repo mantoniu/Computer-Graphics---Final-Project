@@ -8,7 +8,9 @@
 #include "glad/gl.h"
 
 GLuint LoadTextureTileBox(const char *texture_file_path) {
-    int w, h, channels;
+    int w;
+    int h;
+    int channels;
     uint8_t* img = stbi_load(texture_file_path, &w, &h, &channels, 3);
     GLuint texture;
     // Generate an OpenGL texture and make use of it
