@@ -65,7 +65,7 @@ GLuint Cube::getProgramID() const {
     return programID;
 }
 
-void Cube::render(const glm::mat4 &cameraMatrix) {
+void Cube::render(glm::mat4 &cameraMatrix, Light light) {
     glUseProgram(programID);
 
     glBindVertexArray(vaoID);

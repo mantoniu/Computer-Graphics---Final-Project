@@ -11,6 +11,7 @@
 #include <glm/detail/type_vec3.hpp>
 
 #include "glad/gl.h"
+#include "objects/graphics_object/GraphicsObject.h"
 
 // Default vertices
 inline std::vector<GLfloat> default_vertex_buffer_data = {	// Vertex definition for a canonical box
@@ -142,7 +143,7 @@ inline std::vector<GLuint> default_index_buffer_data = {
     20, 22, 23,
 };
 
-class Cube {
+class Cube: public GraphicsObject{
     private:
         glm::vec3 position = glm::vec3(NAN, NAN, NAN);			// Position of the box
         glm::vec3 scale = glm::vec3(NAN, NAN, NAN);			// Size of the box in each axis
@@ -169,8 +170,8 @@ class Cube {
         Cube(glm::vec3 position, glm::vec3 scale, const std::vector<GLfloat> &vertex_buffer_data, const std::vector<GLfloat> &color_buffer_data, const std::vector<GLfloat> &normal_buffer_data, const std::vector<GLuint> &index_buffer_data, GLuint programID);
         [[nodiscard]] GLuint getProgramID() const;
 
-        virtual void render(const glm::mat4 &cameraMatrix);
-        virtual void cleanup();
+        void render(glm::mat4 &cameraMatrix, Light light) override;
+        void cleanup() override;
         virtual void disableVertexAttribArrays();
         virtual void loadBuffers();
 };
