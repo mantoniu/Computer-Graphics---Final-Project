@@ -116,10 +116,6 @@ std::vector<SkinObject> GltfObject::prepareSkinning(const tinygltf::Model &model
 		skinObject.globalJointTransforms.resize(skin.joints.size());
 		skinObject.jointMatrices.resize(skin.joints.size());
 
-		// ----------------------------------------------
-		// TODO: your code here to compute joint matrices
-		// ----------------------------------------------
-
 		// Compute local transforms at each node
 		const int rootNodeIndex = skin.joints[0];
 		std::vector<glm::mat4> localNodeTransforms(skin.joints.size());
@@ -246,17 +242,10 @@ void GltfObject::updateAnimation(
 		const std::vector<float> &times = animationObject.samplers[channel.sampler].input;
 		float animationTime = fmod(time, times.back());
 
-		// ----------------------------------------------------------
-		// TODO: Find a keyframe for getting animation data
-		// ----------------------------------------------------------
 		int keyframeIndex = findKeyframeIndex(times, animationTime);
 
 		const unsigned char *outputPtr = &outputBuffer.data[outputBufferView.byteOffset + outputAccessor.byteOffset];
 		const float *outputBuf = reinterpret_cast<const float*>(outputPtr);
-
-		// -----------------------------------------------------------
-		// TODO: Add interpolation for smooth animation
-		// -----------------------------------------------------------
 
 		float t = (animationTime-times[keyframeIndex])/(times[keyframeIndex+1]-times[keyframeIndex]);
 		if (channel.target_path == "translation") {
