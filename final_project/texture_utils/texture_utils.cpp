@@ -1,9 +1,8 @@
 #include "texture_utils.h"
-
 #include <cstdint>
 #include <iostream>
 #include <ostream>
-#include <stb/stb_image.h>
+#include <stb_image.h>
 
 #include "glad/gl.h"
 
