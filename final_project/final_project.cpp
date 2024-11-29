@@ -89,9 +89,10 @@ int main()
 	glm::float32 zFar = 1000.0f;
 	glm::mat4 projectionMatrix = glm::perspective(glm::radians(FoV), 4.0f / 3.0f, zNear, zFar);
 
-	GltfObject bot = GltfObject("../final_project/3d_assets/bot/bot.gltf");
-
+	auto bot = GltfObject("../final_project/3d_assets/bot/bot.gltf");
 	auto skybox = SkyBox();
+
+	std::vector<GraphicsObject *> objects = {&bot, &skybox};
 
 	// Time and frame rate tracking
 	static double lastTime = glfwGetTime();
@@ -118,8 +119,8 @@ int main()
 		glm::mat4 vp = projectionMatrix * camera.getViewMatrix();
 
 		// Render the buildings
-		skybox.render(vp);
-		bot.render(vp, light);
+		for (auto object : objects)
+			object->render(vp, light);
 
 		// FPS tracking
 		// Count number of frames over a few seconds and take average
@@ -143,8 +144,8 @@ int main()
 	while (!glfwWindowShouldClose(window));
 
 	// Clean up
-	skybox.cleanup();
-	bot.cleanup();
+	for (auto object : objects)
+		object->cleanup();
 
 	// Close OpenGL window and terminate GLFW
 	glfwTerminate();
