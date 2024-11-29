@@ -18,13 +18,17 @@ Cube::Cube(const glm::vec3 position, const glm::vec3 scale) : Cube(position, sca
 Cube::Cube(const glm::vec3 position, const glm::vec3 scale, GLuint programId) : Cube(position, scale, default_vertex_buffer_data, default_color_buffer_data, default_normal_buffer_data, default_index_buffer_data, programId) {
 }
 
-Cube::Cube(const glm::vec3 position, const glm::vec3 scale, const std::vector<GLfloat> &vertex_buffer_data, const std::vector<GLfloat> &color_buffer_data, const std::vector<GLfloat> &normal_buffer_data, const std::vector<GLuint> &index_buffer_data) : Cube(position, scale, vertex_buffer_data, color_buffer_data, normal_buffer_data, index_buffer_data, LoadShadersFromFile("../final_project/objects/shaders/box.vert", "../final_project/objects/shaders/box.frag")){
+Cube::Cube(const glm::vec3 position, const glm::vec3 scale, const std::vector<GLfloat> &vertex_buffer_data, const std::vector<GLfloat> &color_buffer_data, const std::vector<GLfloat> &normal_buffer_data, const std::vector<GLuint> &index_buffer_data) : Cube(position, scale, vertex_buffer_data, color_buffer_data, normal_buffer_data, index_buffer_data, LoadShadersFromFile("../final_project/shaders/skybox/box.vert", "../final_project/shaders/skybox/box.frag")){
 }
 
 Cube::Cube(const glm::vec3 position, const glm::vec3 scale, const std::vector<GLfloat> &vertex_buffer_data, const std::vector<GLfloat> &color_buffer_data, const std::vector<GLfloat> &normal_buffer_data, const std::vector<GLuint> &index_buffer_data, GLuint programID) {
     this->position = position;
     this->scale = scale;
     this->programID = programID;
+
+    // Create a vao object
+    glGenVertexArrays(1, &vaoID);
+    glBindVertexArray(vaoID);
 
     // Create a vertex array object
     glGenVertexArrays(1, &vertexArrayID);
@@ -53,6 +57,8 @@ Cube::Cube(const glm::vec3 position, const glm::vec3 scale, const std::vector<GL
 
     // Create and compile our GLSL program from the shader
     mvpMatrixID = glGetUniformLocation(this->programID, "MVP");
+
+    glBindVertexArray(0);
 }
 
 GLuint Cube::getProgramID() const {
@@ -62,19 +68,9 @@ GLuint Cube::getProgramID() const {
 void Cube::render(const glm::mat4 &cameraMatrix) {
     glUseProgram(programID);
 
-    glEnableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, vertexBufferID);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glBindVertexArray(vaoID);
 
-    glEnableVertexAttribArray(1);
-    glBindBuffer(GL_ARRAY_BUFFER, colorBufferID);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
-
-    glEnableVertexAttribArray(2);
-    glBindBuffer(GL_ARRAY_BUFFER, normalBufferID);
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferID);
+    loadBuffers();
 
     glm::mat4 mvp = cameraMatrix;
 
@@ -102,9 +98,32 @@ void Cube::render(const glm::mat4 &cameraMatrix) {
                    // element array buffer offset
     );
 
+    disableVertexAttribArrays();
+
+    glBindVertexArray(0);
+}
+
+
+void Cube::disableVertexAttribArrays() {
     glDisableVertexAttribArray(0);
     glDisableVertexAttribArray(1);
     glDisableVertexAttribArray(2);
+}
+
+void Cube::loadBuffers() {
+    glEnableVertexAttribArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, vertexBufferID);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+
+    glEnableVertexAttribArray(1);
+    glBindBuffer(GL_ARRAY_BUFFER, colorBufferID);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+
+    glEnableVertexAttribArray(2);
+    glBindBuffer(GL_ARRAY_BUFFER, normalBufferID);
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferID);
 }
 
 void Cube::cleanup(){

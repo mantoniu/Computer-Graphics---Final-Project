@@ -71,7 +71,8 @@ class SkyBox : public Cube{
 
     public:
         SkyBox();
-        void render(const glm::mat4 &cameraMatrix) override;
+        void disableVertexAttribArrays() override;
+        void loadBuffers() override;
         void cleanup() override;
 };
 

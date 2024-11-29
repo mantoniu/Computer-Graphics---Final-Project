@@ -158,6 +158,7 @@ class Cube {
         // Shader variable IDs
         GLuint mvpMatrixID;
         GLuint programID;
+        GLuint vaoID;
 
     public:
         virtual ~Cube() = default;
@@ -170,6 +171,8 @@ class Cube {
 
         virtual void render(const glm::mat4 &cameraMatrix);
         virtual void cleanup();
+        virtual void disableVertexAttribArrays();
+        virtual void loadBuffers();
 };
 
 

@@ -6,10 +6,14 @@
 
 #include <iostream>
 #include <ostream>
+#include <glm/detail/func_common.hpp>
+#include <glm/detail/type_mat4x4.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <render/shader.h>
 
 #include "../../texture_utils/texture_utils.h"
 
-SkyBox::SkyBox() : ::Cube(glm::vec3(0), glm::vec3(100), default_vertex_buffer_data, default_color_buffer_data, default_normal_buffer_data, skybox_index_buffer_data){
+SkyBox::SkyBox() : Cube(glm::vec3(0), glm::vec3(100), default_vertex_buffer_data, default_color_buffer_data, default_normal_buffer_data, skybox_index_buffer_data){
     // Enable UV buffer and texture
     glGenBuffers(1, &uvBufferID);
     glBindBuffer(GL_ARRAY_BUFFER, uvBufferID);
@@ -23,7 +27,9 @@ SkyBox::SkyBox() : ::Cube(glm::vec3(0), glm::vec3(100), default_vertex_buffer_da
     textureSamplerID = glGetUniformLocation(getProgramID(), "textureSampler");
 }
 
-void SkyBox::render(const glm::mat4 &cameraMatrix) {
+void SkyBox::loadBuffers() {
+    Cube::loadBuffers();
+
     glEnableVertexAttribArray(3);
     glBindBuffer(GL_ARRAY_BUFFER, uvBufferID);
     glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
@@ -32,9 +38,10 @@ void SkyBox::render(const glm::mat4 &cameraMatrix) {
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, textureID);
     glUniform1i(static_cast<int>(textureSamplerID), 0);
+}
 
-    Cube::render(cameraMatrix);
-
+void SkyBox::disableVertexAttribArrays() {
+    Cube::disableVertexAttribArrays();
     glDisableVertexAttribArray(3);
 }
 
