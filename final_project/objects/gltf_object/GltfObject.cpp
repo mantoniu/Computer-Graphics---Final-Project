@@ -4,6 +4,7 @@
 
 #include "GltfObject.h"
 
+#include <cmath>
 #include <iostream>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp>
@@ -12,7 +13,7 @@
 
 #include "light/Light.h"
 
-GltfObject::GltfObject(std::string filePath) {
+GltfObject::GltfObject(const std::string& filePath) {
 	// Modify your path if needed
 	if (!loadModel(model, filePath.c_str())) {
 		return;
@@ -52,7 +53,7 @@ glm::mat4 GltfObject::getNodeTransform(const tinygltf::Node &node) {
 			transform = glm::translate(transform, glm::vec3(node.translation[0], node.translation[1], node.translation[2]));
 		}
 		if (node.rotation.size() == 4) {
-			glm::quat q(node.rotation[3], node.rotation[0], node.rotation[1], node.rotation[2]);
+			const glm::quat q(static_cast<float>(node.rotation[3]), static_cast<float>(node.rotation[0]), static_cast<float>(node.rotation[1]), static_cast<float>(node.rotation[2]));
 			transform *= glm::mat4_cast(q);
 		}
 		if (node.scale.size() == 3) {
@@ -63,7 +64,7 @@ glm::mat4 GltfObject::getNodeTransform(const tinygltf::Node &node) {
 }
 
 void GltfObject::computeLocalNodeTransform(const tinygltf::Model& model,
-	int nodeIndex,
+	const int nodeIndex,
 	std::vector<glm::mat4> &localTransforms)
 {
 	localTransforms[nodeIndex] = getNodeTransform(model.nodes[nodeIndex]);
@@ -101,7 +102,7 @@ std::vector<SkinObject> GltfObject::prepareSkinning(const tinygltf::Model &model
 		assert(accessor.type == TINYGLTF_TYPE_MAT4);
 		const tinygltf::BufferView &bufferView = model.bufferViews[accessor.bufferView];
 		const tinygltf::Buffer &buffer = model.buffers[bufferView.buffer];
-		const float *ptr = reinterpret_cast<const float *>(
+		const auto *ptr = reinterpret_cast<const float *>(
 			buffer.data.data() + accessor.byteOffset + bufferView.byteOffset);
 
 		skinObject.inverseBindMatrices.resize(accessor.count);
@@ -138,7 +139,7 @@ std::vector<SkinObject> GltfObject::prepareSkinning(const tinygltf::Model &model
 int findKeyframeIndex(const std::vector<float>& times, float animationTime)
 {
 	int left = 0;
-	int right = times.size() - 1;
+	int right = static_cast<int>(times.size()) - 1;
 
 	while (left <= right) {
 		int mid = (left + right) / 2;
@@ -155,7 +156,7 @@ int findKeyframeIndex(const std::vector<float>& times, float animationTime)
 	}
 
 	// Target not found
-	return times.size() - 2;
+	return static_cast<int>(times.size()) - 2;
 }
 
 std::vector<AnimationObject> GltfObject::prepareAnimation(const tinygltf::Model &model)
@@ -178,7 +179,6 @@ std::vector<AnimationObject> GltfObject::prepareAnimation(const tinygltf::Model 
 			samplerObject.input.resize(inputAccessor.count);
 
 			const unsigned char *inputPtr = &inputBuffer.data[inputBufferView.byteOffset + inputAccessor.byteOffset];
-			const float *inputBuf = reinterpret_cast<const float*>(inputPtr);
 
 			// Read input (time) values
 			int stride = inputAccessor.ByteStride(inputBufferView);
@@ -193,9 +193,6 @@ std::vector<AnimationObject> GltfObject::prepareAnimation(const tinygltf::Model 
 			assert(outputAccessor.componentType == TINYGLTF_COMPONENT_TYPE_FLOAT);
 
 			const unsigned char *outputPtr = &outputBuffer.data[outputBufferView.byteOffset + outputAccessor.byteOffset];
-			const float *outputBuf = reinterpret_cast<const float*>(outputPtr);
-
-			int outputStride = outputAccessor.ByteStride(outputBufferView);
 
 			// Output values
 			samplerObject.output.resize(outputAccessor.count);
@@ -240,12 +237,11 @@ void GltfObject::updateAnimation(
 
 		// Calculate current animation time (wrap if necessary)
 		const std::vector<float> &times = animationObject.samplers[channel.sampler].input;
-		float animationTime = fmod(time, times.back());
+		auto animationTime = static_cast<float>(fmod(time, times.back()));
 
 		int keyframeIndex = findKeyframeIndex(times, animationTime);
 
 		const unsigned char *outputPtr = &outputBuffer.data[outputBufferView.byteOffset + outputAccessor.byteOffset];
-		const float *outputBuf = reinterpret_cast<const float*>(outputPtr);
 
 		float t = (animationTime-times[keyframeIndex])/(times[keyframeIndex+1]-times[keyframeIndex]);
 		if (channel.target_path == "translation") {
@@ -272,7 +268,7 @@ void GltfObject::updateAnimation(
                 dot_product = -dot_product;
             }
             dot_product = glm::clamp(dot_product, -1.0f, 1.0f);
-            float angle = acos(dot_product);
+            auto angle = std::acos(dot_product);
 
             float t1 = times[keyframeIndex];
             float delta = times[keyframeIndex + 1] - t1;
@@ -283,8 +279,8 @@ void GltfObject::updateAnimation(
                 rotation = (1-new_time)*rotation0 + new_time*rotation1;
 
             } else {
-                float w1 = sin((1 - new_time) * angle) / sin(angle);
-                float w2 = sin(new_time * angle) / sin(angle);
+                float w1 = std::sin((1 - new_time) * angle) / std::sin(angle);
+                float w2 = std::sin(new_time * angle) / std::sin(angle);
                 rotation = w1 * rotation0_norm + w2 * rotation1_norm;
             }
             nodeTransforms[targetNodeIndex] *= glm::mat4_cast(rotation);
@@ -317,16 +313,14 @@ void GltfObject::updateSkinning(const std::vector<glm::mat4> &nodeTransforms) {
 }
 
 void GltfObject::update(float time) {
-	if (model.animations.size() > 0) {
+	if (!model.animations.empty()) {
 		const tinygltf::Animation &animation = model.animations[0];
 		const AnimationObject &animationObject = animationObjects[0];
 
-		for(int i=0; i<model.skins.size(); i++) {
-			const auto& skin = model.skins[i];
-
-			std::vector<glm::mat4> nodeTransforms(skin.joints.size());
-			for (size_t i = 0; i < nodeTransforms.size(); ++i) {
-				nodeTransforms[i] = glm::mat4(1.0);
+		for(const auto & skin : model.skins) {
+				std::vector<glm::mat4> nodeTransforms(skin.joints.size());
+			for (auto & nodeTransform : nodeTransforms) {
+				nodeTransform = glm::mat4(1.0);
 			}
 
 			updateAnimation(model, animation, animationObject, time, nodeTransforms);
@@ -358,7 +352,7 @@ bool GltfObject::loadModel(tinygltf::Model &model, const char *filename) {
 }
 
 void GltfObject::bindMesh(std::vector<PrimitiveObject> &primitiveObjects,
-			tinygltf::Model &model, tinygltf::Mesh &mesh) {
+			const tinygltf::Model &model, tinygltf::Mesh &mesh) {
 
 	std::map<int, GLuint> vbos;
 	for (size_t i = 0; i < model.bufferViews.size(); ++i) {
@@ -367,7 +361,7 @@ void GltfObject::bindMesh(std::vector<PrimitiveObject> &primitiveObjects,
 		int target = bufferView.target;
 
 		if (bufferView.target == 0) {
-			// The bufferView with target == 0 in our model refers to
+			// The bufferView with target == 0 in our graphics_object refers to
 			// the skinning weights, for 25 joints, each 4x4 matrix (16 floats), totaling to 400 floats or 1600 bytes.
 			// So it is considered safe to skip the warning.
 			//std::cout << "WARN: bufferView.target is zero" << std::endl;
@@ -378,17 +372,16 @@ void GltfObject::bindMesh(std::vector<PrimitiveObject> &primitiveObjects,
 		GLuint vbo;
 		glGenBuffers(1, &vbo);
 		glBindBuffer(target, vbo);
-		glBufferData(target, bufferView.byteLength,
+		glBufferData(target, static_cast<long long>(bufferView.byteLength),
 					&buffer.data.at(0) + bufferView.byteOffset, GL_STATIC_DRAW);
 
-		vbos[i] = vbo;
+		vbos[static_cast<int>(i)] = vbo;
 	}
 
 	// Each mesh can contain several primitives (or parts), each we need to
 	// bind to an OpenGL vertex array object
-	for (size_t i = 0; i < mesh.primitives.size(); ++i) {
+	for (const auto& primitive : mesh.primitives) {
 
-		tinygltf::Primitive primitive = mesh.primitives[i];
 		tinygltf::Accessor indexAccessor = model.accessors[primitive.indices];
 
 		GLuint vao;
@@ -407,11 +400,11 @@ void GltfObject::bindMesh(std::vector<PrimitiveObject> &primitiveObjects,
 			}
 
 			int vaa = -1;
-			if (attrib.first.compare("POSITION") == 0) vaa = 0;
-			if (attrib.first.compare("NORMAL") == 0) vaa = 1;
-			if (attrib.first.compare("TEXCOORD_0") == 0) vaa = 2;
-			if (attrib.first.compare("JOINTS_0") == 0) vaa = 3;
-			if (attrib.first.compare("WEIGHTS_0") == 0) vaa = 4;
+			if (attrib.first == "POSITION") vaa = 0;
+			if (attrib.first == "NORMAL") vaa = 1;
+			if (attrib.first == "TEXCOORD_0") vaa = 2;
+			if (attrib.first == "JOINTS_0") vaa = 3;
+			if (attrib.first == "WEIGHTS_0") vaa = 4;
 			if (vaa > -1) {
 				glEnableVertexAttribArray(vaa);
 				glVertexAttribPointer(vaa, size, accessor.componentType,
@@ -441,9 +434,9 @@ void GltfObject::bindModelNodes(std::vector<PrimitiveObject> &primitiveObjects,
 	}
 
 	// Recursive into children nodes
-	for (size_t i = 0; i < node.children.size(); i++) {
-		assert((node.children[i] >= 0) && (node.children[i] < model.nodes.size()));
-		bindModelNodes(primitiveObjects, model, model.nodes[node.children[i]]);
+	for (int i : node.children) {
+		assert((i >= 0) && (i < model.nodes.size()));
+		bindModelNodes(primitiveObjects, model, model.nodes[i]);
 	}
 }
 
@@ -451,16 +444,16 @@ std::vector<PrimitiveObject> GltfObject::bindModel(tinygltf::Model &model) {
 	std::vector<PrimitiveObject> primitiveObjects;
 
 	const tinygltf::Scene &scene = model.scenes[model.defaultScene];
-	for (size_t i = 0; i < scene.nodes.size(); ++i) {
-		assert((scene.nodes[i] >= 0) && (scene.nodes[i] < model.nodes.size()));
-		bindModelNodes(primitiveObjects, model, model.nodes[scene.nodes[i]]);
+	for (int node : scene.nodes) {
+		assert((node >= 0) && (node < model.nodes.size()));
+		bindModelNodes(primitiveObjects, model, model.nodes[node]);
 	}
 
 	return primitiveObjects;
 }
 
 void drawMesh(const std::vector<PrimitiveObject> &primitiveObjects,
-			tinygltf::Model &model, tinygltf::Mesh &mesh) {
+			const tinygltf::Model &model, const tinygltf::Mesh &mesh) {
 
 	for (size_t i = 0; i < mesh.primitives.size(); ++i)
 	{
@@ -474,7 +467,7 @@ void drawMesh(const std::vector<PrimitiveObject> &primitiveObjects,
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbos.at(indexAccessor.bufferView));
 
-		glDrawElements(primitive.mode, indexAccessor.count,
+		glDrawElements(primitive.mode, static_cast<int>(indexAccessor.count),
 					indexAccessor.componentType,
 					BUFFER_OFFSET(indexAccessor.byteOffset));
 
@@ -483,13 +476,13 @@ void drawMesh(const std::vector<PrimitiveObject> &primitiveObjects,
 }
 
 void GltfObject::drawModelNodes(const std::vector<PrimitiveObject>& primitiveObjects,
-					tinygltf::Model &model, tinygltf::Node &node) {
+					tinygltf::Model &model, const tinygltf::Node &node) {
 	// Draw the mesh at the node, and recursively do so for children nodes
 	if ((node.mesh >= 0) && (node.mesh < model.meshes.size())) {
 		drawMesh(primitiveObjects, model, model.meshes[node.mesh]);
 	}
-	for (size_t i = 0; i < node.children.size(); i++) {
-		drawModelNodes(primitiveObjects, model, model.nodes[node.children[i]]);
+	for (const int i : node.children) {
+		drawModelNodes(primitiveObjects, model, model.nodes[i]);
 	}
 }
 
@@ -497,12 +490,12 @@ void GltfObject::drawModel(const std::vector<PrimitiveObject>& primitiveObjects,
 			tinygltf::Model &model) {
 	// Draw all nodes
 	const tinygltf::Scene &scene = model.scenes[model.defaultScene];
-	for (size_t i = 0; i < scene.nodes.size(); ++i) {
-		drawModelNodes(primitiveObjects, model, model.nodes[scene.nodes[i]]);
+	for (int node : scene.nodes) {
+		drawModelNodes(primitiveObjects, model, model.nodes[node]);
 	}
 }
 
-void GltfObject::render(glm::mat4 cameraMatrix, Light light) {
+void GltfObject::render(glm::mat4 &cameraMatrix, Light light) {
 	glUseProgram(programID);
 
 	// Set camera
@@ -512,18 +505,18 @@ void GltfObject::render(glm::mat4 cameraMatrix, Light light) {
 	modelMatrix = glm::scale(modelMatrix, glm::vec3(0.05f, 0.05f, 0.05f));
 	mvp *= modelMatrix;
 
-	glUniformMatrix4fv(mvpMatrixID, 1, GL_FALSE, &mvp[0][0]);
+	glUniformMatrix4fv(static_cast<GLint>(mvpMatrixID), 1, GL_FALSE, &mvp[0][0]);
 
 	// Set animation data for linear blend skinning in shader
 
 	for (const auto& skinObject : skinObjects)
-		glUniformMatrix4fv(jointMatricesID, skinObject.jointMatrices.size(), GL_FALSE, glm::value_ptr(skinObject.jointMatrices[0]));
+		glUniformMatrix4fv(static_cast<GLint>(jointMatricesID), static_cast<int>(skinObject.jointMatrices.size()), GL_FALSE, glm::value_ptr(skinObject.jointMatrices[0]));
 
 	// Set light data
-	glUniform3fv(lightPositionID, 1, &(light.getPosition())[0]);
-	glUniform3fv(lightIntensityID, 1, &(light.getIntensity())[0]);
+	glUniform3fv(static_cast<GLint>(lightPositionID), 1, &(light.getPosition())[0]);
+	glUniform3fv(static_cast<GLint>(lightIntensityID), 1, &(light.getIntensity())[0]);
 
-	// Draw the GLTF model
+	// Draw the GLTF graphics_object
 	drawModel(primitiveObjects, model);
 }
 
