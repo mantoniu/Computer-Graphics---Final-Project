@@ -1,3 +1,3 @@
-/build
 /external
 /.vscode
+/cmake-build-debug/
