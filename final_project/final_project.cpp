@@ -1,15 +1,21 @@
 #include <glad/gl.h>
 #include <GLFW/glfw3.h>
 #include <glm/gtc/matrix_transform.hpp>
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb/stb_image.h>
 #include <iostream>
 #define _USE_MATH_DEFINES
 #include <iomanip>
 #include <random>
 
 #include "Objects/skybox/SkyBox.h"
+#include "objects/gltf_object/GltfObject.h"
+
+#include "light/Light.h"
 #include "camera/camera.h"
+
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/detail/type_mat.hpp>
+#include <glm/detail/type_vec.hpp>
+
 
 static GLFWwindow *window;
 static void key_callback(GLFWwindow *window, int key, int scancode, int action, int mode);
@@ -23,6 +29,9 @@ std::mt19937 gen(rd());
 static float viewAzimuth = 0;
 static float viewPolar = 0;
 static float viewDistance = 10.0f;
+
+// Lighting
+Light light(glm::vec3(5e6f, 5e6f, 5e6f), glm::vec3(-275.0f, 500.0f, 800.0f));
 
 // OpenGL camera view parameters
 float cameraSensitivity = 0.001f;
@@ -43,7 +52,7 @@ int main()
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	// Open a window and create its OpenGL context
-	window = glfwCreateWindow(1024, 768, "Lab 2", NULL, NULL);
+	window = glfwCreateWindow(1024, 768, "Final Project", NULL, NULL);
 	if (window == NULL)
 	{
 		std::cerr << "Failed to open a GLFW window." << std::endl;
@@ -72,7 +81,6 @@ int main()
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 
-	auto skybox = SkyBox();
 
     // ---------------------------
 
@@ -81,23 +89,37 @@ int main()
 	glm::float32 zFar = 1000.0f;
 	glm::mat4 projectionMatrix = glm::perspective(glm::radians(FoV), 4.0f / 3.0f, zNear, zFar);
 
+	GltfObject bot = GltfObject("../final_project/3d_assets/bot/bot.gltf");
+
+	auto skybox = SkyBox();
+
 	// Time and frame rate tracking
 	static double lastTime = glfwGetTime();
+	float time = 0.0f;			// Animation time
 	float fTime = 0.0f;			// Time for measuring fps
 	unsigned long frames = 0;
+	bool playAnimation = true;
+	static float playbackSpeed = 2.0f;
 
 	do
 	{
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		// Update states for animation
 		double currentTime = glfwGetTime();
-		auto deltaTime = static_cast<float>(currentTime - lastTime);
+		float deltaTime = float(currentTime - lastTime);
 		lastTime = currentTime;
 
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		if (true) {
+			time += deltaTime * playbackSpeed;
+			bot.update(time);
+		}
 
 		glm::mat4 vp = projectionMatrix * camera.getViewMatrix();
 
 		// Render the buildings
 		skybox.render(vp);
+		bot.render(vp, light);
 
 		// FPS tracking
 		// Count number of frames over a few seconds and take average
@@ -109,7 +131,7 @@ int main()
 			fTime = 0;
 
 			std::stringstream stream;
-			stream << std::fixed << std::setprecision(2) << "Lab 4 | Frames per second (FPS): " << fps;
+			stream << std::fixed << std::setprecision(2) << "Final Project | Frames per second (FPS): " << fps;
 			glfwSetWindowTitle(window, stream.str().c_str());
 		}
 
@@ -122,6 +144,7 @@ int main()
 
 	// Clean up
 	skybox.cleanup();
+	bot.cleanup();
 
 	// Close OpenGL window and terminate GLFW
 	glfwTerminate();
