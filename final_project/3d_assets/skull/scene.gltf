@@ -3,50 +3,50 @@
     {
       "bufferView": 2,
       "componentType": 5126,
-      "count": 5059,
+      "count": 17358,
       "max": [
-        0.6604139804840088,
-        1.0,
-        0.22421300411224365
+        0.668556272983551,
+        0.8799268007278442,
+        0.9919244050979614
       ],
       "min": [
-        -0.6604139804840088,
-        -1.0,
-        -0.22421300411224365
+        -0.6679636240005493,
+        -0.9085731506347656,
+        -1.005160927772522
       ],
       "type": "VEC3"
     },
     {
       "bufferView": 2,
-      "byteOffset": 60708,
+      "byteOffset": 208296,
       "componentType": 5126,
-      "count": 5059,
+      "count": 17358,
       "max": [
-        0.9994677901268005,
-        1.0,
-        0.9999508857727051
+        0.9999207258224487,
+        0.9999319314956665,
+        0.9999056458473206
       ],
       "min": [
-        -0.9995092153549194,
-        -1.0,
-        -0.9998863339424133
+        -0.9999850988388062,
+        -0.9996305704116821,
+        -0.999985933303833
       ],
       "type": "VEC3"
     },
     {
       "bufferView": 3,
       "componentType": 5126,
-      "count": 5059,
+      "count": 17358,
       "max": [
-        0.9999988675117493,
-        0.9998632669448853,
-        0.9996933341026306,
+        0.9999969601631165,
+        0.9999688267707825,
+        0.9999526143074036,
         1.0
       ],
       "min": [
-        -0.9999983906745911,
-        -0.9999936819076538,
-        -0.9997200965881348,
+        -0.9999236464500427,
+        -0.9999648928642273,
+        -0.9999880194664001,
         -1.0
       ],
       "type": "VEC4"
@@ -54,61 +54,61 @@
     {
       "bufferView": 1,
       "componentType": 5126,
-      "count": 5059,
+      "count": 17358,
       "max": [
-        0.9968870282173157,
-        0.9995120167732239
+        0.9974700212478638,
+        0.9892600178718567
       ],
       "min": [
-        0.0,
-        0.0
+        0.0019499999471008778,
+        0.0019499999471008778
       ],
       "type": "VEC2"
     },
     {
       "bufferView": 0,
       "componentType": 5125,
-      "count": 22653,
+      "count": 93048,
       "type": "SCALAR"
     }
   ],
   "asset": {
     "extras": {
-      "author": "kand8998 (https://sketchfab.com/KaitlynAndrus)",
+      "author": "martinjario (https://sketchfab.com/martinjario)",
       "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
-      "source": "https://sketchfab.com/3d-models/female-character-simple-c8b1a28ddfce4d838a85560a8e419a37",
-      "title": "Female Character (Simple)"
+      "source": "https://sketchfab.com/3d-models/skull-downloadable-1a9db900738d44298b0bc59f68123393",
+      "title": "Skull downloadable"
     },
-    "generator": "Sketchfab-12.68.0",
+    "generator": "Sketchfab-12.66.0",
     "version": "2.0"
   },
   "bufferViews": [
     {
       "buffer": 0,
-      "byteLength": 90612,
+      "byteLength": 372192,
       "name": "floatBufferViews",
       "target": 34963
     },
     {
       "buffer": 0,
-      "byteLength": 40472,
-      "byteOffset": 90612,
+      "byteLength": 138864,
+      "byteOffset": 372192,
       "byteStride": 8,
       "name": "floatBufferViews",
       "target": 34962
     },
     {
       "buffer": 0,
-      "byteLength": 121416,
-      "byteOffset": 131084,
+      "byteLength": 416592,
+      "byteOffset": 511056,
       "byteStride": 12,
       "name": "floatBufferViews",
       "target": 34962
     },
     {
       "buffer": 0,
-      "byteLength": 80944,
-      "byteOffset": 252500,
+      "byteLength": 277728,
+      "byteOffset": 927648,
       "byteStride": 16,
       "name": "floatBufferViews",
       "target": 34962
@@ -116,56 +116,37 @@
   ],
   "buffers": [
     {
-      "byteLength": 333444,
+      "byteLength": 1205376,
       "uri": "scene.bin"
     }
   ],
   "images": [
     {
-      "uri": "textures/Base_Shader_baseColor.png"
+      "uri": "textures/defaultMat_baseColor.jpeg"
     },
     {
-      "uri": "textures/Base_Shader_metallicRoughness.png"
-    },
-    {
-      "uri": "textures/Base_Shader_emissive.jpeg"
-    },
-    {
-      "uri": "textures/Base_Shader_normal.png"
+      "uri": "textures/defaultMat_normal.jpeg"
     }
   ],
   "materials": [
     {
-      "alphaMode": "BLEND",
-      "doubleSided": true,
-      "emissiveFactor": [
-        1.0,
-        1.0,
-        1.0
-      ],
-      "emissiveTexture": {
-        "index": 2
-      },
-      "name": "Base_Shader",
+      "name": "defaultMat",
       "normalTexture": {
-        "index": 3
-      },
-      "occlusionTexture": {
-        "index": 1
+        "index": 1,
+        "scale": 0.85
       },
       "pbrMetallicRoughness": {
         "baseColorTexture": {
           "index": 0
         },
-        "metallicRoughnessTexture": {
-          "index": 1
-        }
+        "metallicFactor": 0.0,
+        "roughnessFactor": 0.6
       }
     }
   ],
   "meshes": [
     {
-      "name": "defaultMaterial",
+      "name": "Object_0",
       "primitives": [
         {
           "attributes": {
@@ -210,35 +191,11 @@
       "children": [
         2
       ],
-      "matrix": [
-        1.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        -4.371139006309477e-08,
-        0.999999999999999,
-        0.0,
-        0.0,
-        -0.999999999999999,
-        -4.371139006309477e-08,
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        1.0
-      ],
-      "name": "Collada visual scene group"
-    },
-    {
-      "children": [
-        3
-      ],
-      "name": "Character_Low"
+      "name": "craneo.OBJ.cleaner.gles"
     },
     {
       "mesh": 0,
-      "name": "defaultMaterial"
+      "name": "Object_2"
     }
   ],
   "samplers": [
@@ -266,14 +223,6 @@
     {
       "sampler": 0,
       "source": 1
-    },
-    {
-      "sampler": 0,
-      "source": 2
-    },
-    {
-      "sampler": 0,
-      "source": 3
     }
   ]
 }

@@ -24,7 +24,8 @@ add_executable(final_project
     final_project/Objects/skybox/SkyBox.cpp
     final_project/texture_utils/texture_utils.cpp
     final_project/objects/gltf_object/GltfObject.cpp
-    final_project/light/Light.cpp final_project/tinygltf_implementation.cpp
+    final_project/light/Light.cpp
+    final_project/tinygltf_implementation.cpp
     final_project/objects/graphics_object/GraphicsObject.h
 )
 

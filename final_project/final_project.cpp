@@ -2,7 +2,7 @@
 #include <GLFW/glfw3.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
-#define _USE_MATH_DEFINES
+#define USE_MATH_DEFINES
 #include <iomanip>
 #include <random>
 
@@ -19,7 +19,7 @@
 
 static GLFWwindow *window;
 static void key_callback(GLFWwindow *window, int key, int scancode, int action, int mode);
-static void mouse_callback(GLFWwindow* window, double xpos, double ypos);
+static void mouse_callback(GLFWwindow* window, double xPos, double yPos);
 
 // Random preset
 std::random_device rd;  
@@ -52,8 +52,8 @@ int main()
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	// Open a window and create its OpenGL context
-	window = glfwCreateWindow(1024, 768, "Final Project", NULL, NULL);
-	if (window == NULL)
+	window = glfwCreateWindow(1024, 768, "Final Project", nullptr, nullptr);
+	if (window == nullptr)
 	{
 		std::cerr << "Failed to open a GLFW window." << std::endl;
 		glfwTerminate();
@@ -89,10 +89,11 @@ int main()
 	glm::float32 zFar = 1000.0f;
 	glm::mat4 projectionMatrix = glm::perspective(glm::radians(FoV), 4.0f / 3.0f, zNear, zFar);
 
-	auto bot = GltfObject("../final_project/3d_assets/bot/bot.gltf");
+	auto bot = GltfObject("../final_project/3d_assets/zombie/untitled.gltf", true);
+	auto suzanne = GltfObject("../final_project/3d_assets/suzanne/Suzanne.gltf");
 	auto skybox = SkyBox();
 
-	std::vector<GraphicsObject *> objects = {&bot, &skybox};
+	std::vector<GraphicsObject *> objects = {&bot, &skybox, &suzanne};
 
 	// Time and frame rate tracking
 	static double lastTime = glfwGetTime();
@@ -108,10 +109,10 @@ int main()
 
 		// Update states for animation
 		double currentTime = glfwGetTime();
-		float deltaTime = float(currentTime - lastTime);
+		auto deltaTime = static_cast<float>(currentTime - lastTime);
 		lastTime = currentTime;
 
-		if (true) {
+		if (playAnimation) {
 			time += deltaTime * playbackSpeed;
 			bot.update(time);
 		}
@@ -159,6 +160,6 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 	camera.onKeyPress(window);
 }
 
-static void mouse_callback(GLFWwindow* window, double xpos, double ypos){
-	camera.onMouseChange(window, xpos, ypos);
+static void mouse_callback(GLFWwindow* window, double xPos, double yPos){
+	camera.onMouseChange(window, xPos, yPos);
 }

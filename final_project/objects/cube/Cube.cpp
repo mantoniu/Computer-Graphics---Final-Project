@@ -100,6 +100,7 @@ void Cube::render(glm::mat4 &cameraMatrix, Light light) {
 
     disableVertexAttribArrays();
 
+    glBindTexture(GL_TEXTURE_2D, 0);
     glBindVertexArray(0);
 }
 

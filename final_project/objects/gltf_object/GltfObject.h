@@ -13,6 +13,20 @@
 #include "objects/graphics_object/GraphicsObject.h"
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
 
+// Texture types
+struct Material {
+	glm::vec4 baseColorFactor;
+	glm::vec3 emissiveFactor;
+	float metallicFactor;
+	float roughnessFactor;
+	float occlusionFactor;
+	int hasBaseColorTexture;
+	int hasMetallicRoughnessTexture;
+	int hasNormalTexture;
+	int hasEmissiveTexture;
+	int hasOcclusionTexture;
+};
+
 // Each VAO corresponds to each mesh primitive in the GLTF graphics_object
 struct PrimitiveObject {
 	GLuint vao;
@@ -63,8 +77,35 @@ class GltfObject : public GraphicsObject{
 		std::vector<SkinObject> skinObjects;
 		std::vector<AnimationObject> animationObjects;
 
+		int animated;
+
+		// base color
+		std::map<int, int> baseColorMaterialIndices;
+		std::vector<int> baseColorTexturesIndices;
+		int colorTexturesCount = 0;
+
+		// metallic roughness
+		std::map<int, int> metallicRoughnessMaterialIndices;
+		std::vector<int> metallicRoughnessTexturesIndices;
+	    int metaliicRoughnessTextureCount = 0;
+
+		// Material array
+		Material materialsData[100];
+
+		// Textures arrays
+		GLuint colorTexturesID;
+		GLuint normalTexturesID;
+		GLuint emissiveTexturesID;
+		GLuint occlusionTexturesID;
+		GLuint metallicRoughnessTextureID;
+
+		GLuint uboMaterials;
+
 	public:
 		explicit GltfObject(const std::string& filePath);
+
+		GltfObject(const std::string &filePath, bool animated);
+
 		static glm::mat4 getNodeTransform(const tinygltf::Node& node);
 		static void computeLocalNodeTransform(const tinygltf::Model& model, int nodeIndex, std::vector<glm::mat4> &localTransforms);
 		static void computeGlobalNodeTransform(const tinygltf::Model& model, const std::vector<glm::mat4> &localTransforms, int nodeIndex, const glm::mat4& parentTransform, std::vector<glm::mat4> &globalTransforms);
@@ -78,12 +119,34 @@ class GltfObject : public GraphicsObject{
 
 		static bool loadModel(tinygltf::Model &model, const char *filename);
 
-		static void bindMesh(std::vector<PrimitiveObject> &primitiveObjects, const tinygltf::Model &model, tinygltf::Mesh &mesh);
-		static void bindModelNodes(std::vector<PrimitiveObject> &primitiveObjects, tinygltf::Model &model, tinygltf::Node &node);
-		static std::vector<PrimitiveObject> bindModel(tinygltf::Model &model);
+		void bindTexture(const std::string &textureType, const tinygltf::Model &model, const tinygltf::Primitive &primitive) const;
 
-		static void drawModelNodes(const std::vector<PrimitiveObject>& primitiveObjects, tinygltf::Model &model, const tinygltf::Node &node);
-		static void drawModel(const std::vector<PrimitiveObject>& primitiveObjects, tinygltf::Model &model);
+		void bindMesh(std::vector<PrimitiveObject>& primitiveObjects, const tinygltf::Model& model, tinygltf::Mesh& mesh);
+		void bindModelNodes(std::vector<PrimitiveObject> &primitiveObjects, tinygltf::Model &model, tinygltf::Node &node);
+		std::vector<PrimitiveObject> bindModel(tinygltf::Model &model);
+
+		GLuint initTextureArrays(std::vector<int> textureIndices) const;
+
+		void loadAndResizeTexture(int textureIndex, int width, int height);
+
+		void preloadTextures();
+
+		GLuint loadTexture(int textureIndex) const;
+		void loadMaterials();
+
+		void initBuffers();
+
+		void uploadMaterialData();
+
+		void bindTexture(const tinygltf::Model &model, const tinygltf::Primitive &primitive);
+
+		void bindTextures();
+
+		void drawMesh(const std::vector<PrimitiveObject> &primitiveObjects, const tinygltf::Model &model,
+		              const tinygltf::Mesh &mesh);
+
+		void drawModelNodes(const std::vector<PrimitiveObject>& primitiveObjects, tinygltf::Model &model, const tinygltf::Node &node);
+		void drawModel(const std::vector<PrimitiveObject>& primitiveObjects, tinygltf::Model &model);
 
 		void render(glm::mat4 &cameraMatrix, Light light) override;
 	    void cleanup() override;
