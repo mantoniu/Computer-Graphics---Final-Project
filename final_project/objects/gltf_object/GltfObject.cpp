@@ -19,7 +19,7 @@
 
 GltfObject::GltfObject(const std::string& filePath) : GltfObject(filePath, false){}
 
-GltfObject::GltfObject(const std::string& filePath, bool animated) {
+GltfObject::GltfObject(const std::string& filePath, bool animated) : GraphicsObject("../final_project/shaders/bot/gltf.vert", "../final_project/shaders/bot/gltf.frag"){
 	// Modify your path if needed
 	if (!loadModel(model, filePath.c_str())) {
 		return;
@@ -36,13 +36,6 @@ GltfObject::GltfObject(const std::string& filePath, bool animated) {
 	// Prepare animation data
 	animationObjects = prepareAnimation(model);
 
-	// Create and compile our GLSL program from the shaders
-	programID = LoadShadersFromFile("../final_project/shaders/bot/gltf.vert", "../final_project/shaders/bot/gltf.frag");
-	if (programID == 0)
-	{
-		std::cerr << "Failed to load shaders." << std::endl;
-	}
-
 	loadMaterials();
 
 	colorTexturesID = initTextureArrays(baseColorTexturesIndices);
@@ -56,20 +49,15 @@ GltfObject::GltfObject(const std::string& filePath, bool animated) {
 		std::cerr << "Failed to load metallic roughness textures." << std::endl;
 	}
 
-	// Get a handle for GLSL variables
-	mvpMatrixID = glGetUniformLocation(programID, "MVP");
-	if (mvpMatrixID == -1) {
-		std::cerr << "Uniform 'MVP' not found in shader." << std::endl;
-	}
-	lightPositionID = glGetUniformLocation(programID, "lightPosition");
+	lightPositionID = glGetUniformLocation(getProgramId(), "lightPosition");
 	if (lightPositionID == -1) {
 		std::cerr << "Uniform 'lightPosition' not found in shader." << std::endl;
 	}
-	lightIntensityID = glGetUniformLocation(programID, "lightIntensity");
+	lightIntensityID = glGetUniformLocation(getProgramId(), "lightIntensity");
 	if (lightIntensityID == -1) {
 		std::cerr << "Uniform 'lightIntensity' not found in shader." << std::endl;
 	}
-	jointMatricesID = glGetUniformLocation(programID, "jointMatrices");
+	jointMatricesID = glGetUniformLocation(getProgramId(), "jointMatrices");
 }
 
 
@@ -363,12 +351,12 @@ void GltfObject::bindMesh(std::vector<PrimitiveObject>& primitiveObjects, const 
             continue;
         }
 
-    	GLint metMaterialIDLocation = glGetUniformLocation(programID, "metTextureIndex");
+    	GLint metMaterialIDLocation = glGetUniformLocation(getProgramId(), "metTextureIndex");
     	glUniform1i(metMaterialIDLocation,
     		(metallicRoughnessMaterialIndices.find(primitive.material) != metallicRoughnessMaterialIndices.end()) ? metallicRoughnessTexturesIndices[primitive.material] : -1);
 
     	if (baseColorMaterialIndices.find(primitive.material) != baseColorMaterialIndices.end()) {
-    		GLint materialIDLocation = glGetUniformLocation(programID, "colorTextureIndex");
+    		GLint materialIDLocation = glGetUniformLocation(getProgramId(), "colorTextureIndex");
     		glUniform1i(materialIDLocation, baseColorMaterialIndices[primitive.material]);
     	}
 
@@ -641,17 +629,7 @@ void GltfObject::drawModel(const std::vector<PrimitiveObject>& primitiveObjects,
 }
 
 void GltfObject::render(glm::mat4 &cameraMatrix, Light light) {
-	glUseProgram(programID);
-
-	// Set camera
-	glm::mat4 mvp = cameraMatrix;
-	auto modelMatrix = glm::mat4();
-	// Scale the box along each axis
-	modelMatrix = glm::scale(modelMatrix, glm::vec3(0.3f));
-	modelMatrix = glm::rotate(modelMatrix, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-	mvp *= modelMatrix;
-
-	glUniformMatrix4fv(static_cast<GLint>(mvpMatrixID), 1, GL_FALSE, &mvp[0][0]);
+	GraphicsObject::render(cameraMatrix, light);
 
 	// Set animation data for linear blend skinning in shader
 
@@ -663,7 +641,7 @@ void GltfObject::render(glm::mat4 &cameraMatrix, Light light) {
 	glBindTexture(GL_TEXTURE_2D_ARRAY, colorTexturesID);
 
 	// Spécifier l'unité de texture pour le shader
-	GLint location = glGetUniformLocation(programID, "textureArray");
+	GLint location = glGetUniformLocation(getProgramId(), "textureArray");
 	if (location == -1) {
 		std::cerr << "Error: uniform 'textureArray' not found in shader program." << std::endl;
 	} else glUniform1i(location, 0);
@@ -671,7 +649,7 @@ void GltfObject::render(glm::mat4 &cameraMatrix, Light light) {
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D_ARRAY, metallicRoughnessTextureID);
 
-	location = glGetUniformLocation(programID, "metTextureArray");
+	location = glGetUniformLocation(getProgramId(), "metTextureArray");
 	if (location == -1) {
 		std::cerr << "Error: uniform 'metTextureArray' not found in shader program." << std::endl;
 	} else glUniform1i(location, 1);
@@ -680,13 +658,9 @@ void GltfObject::render(glm::mat4 &cameraMatrix, Light light) {
 	glUniform3fv(static_cast<GLint>(lightPositionID), 1, &(light.getPosition())[0]);
 	glUniform3fv(static_cast<GLint>(lightIntensityID), 1, &(light.getIntensity())[0]);
 
-	GLint metMaterialIDLocation = glGetUniformLocation(programID, "animated");
+	GLint metMaterialIDLocation = glGetUniformLocation(getProgramId(), "animated");
 	glUniform1i(metMaterialIDLocation, animated);
 
 	// Draw the GLTF graphics_object
 	drawModel(primitiveObjects, model);
-}
-
-void GltfObject::cleanup() {
-	glDeleteProgram(programID);
 }

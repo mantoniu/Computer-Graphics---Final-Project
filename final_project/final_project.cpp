@@ -89,9 +89,12 @@ int main()
 	glm::float32 zFar = 1000.0f;
 	glm::mat4 projectionMatrix = glm::perspective(glm::radians(FoV), 4.0f / 3.0f, zNear, zFar);
 
-	auto bot = GltfObject("../final_project/3d_assets/zombie/untitled.gltf", true);
+	auto bot = GltfObject("../final_project/3d_assets/shiba/scene.gltf");
 	auto suzanne = GltfObject("../final_project/3d_assets/suzanne/Suzanne.gltf");
 	auto skybox = SkyBox();
+	bot.setScale(glm::vec3(0.3f));
+	bot.setRotation(-90.0f, glm::vec3(1, 0, 0));
+
 
 	std::vector<GraphicsObject *> objects = {&bot, &skybox, &suzanne};
 

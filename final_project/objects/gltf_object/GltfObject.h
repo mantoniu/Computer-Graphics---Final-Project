@@ -69,15 +69,14 @@ class GltfObject : public GraphicsObject{
 		GLuint jointMatricesID;
 		GLuint lightPositionID;
 		GLuint lightIntensityID;
-		GLuint programID;
+
+		int animated;
 
 		tinygltf::Model model;
 
 		std::vector<PrimitiveObject> primitiveObjects;
 		std::vector<SkinObject> skinObjects;
 		std::vector<AnimationObject> animationObjects;
-
-		int animated;
 
 		// base color
 		std::map<int, int> baseColorMaterialIndices;
@@ -149,7 +148,6 @@ class GltfObject : public GraphicsObject{
 		void drawModel(const std::vector<PrimitiveObject>& primitiveObjects, tinygltf::Model &model);
 
 		void render(glm::mat4 &cameraMatrix, Light light) override;
-	    void cleanup() override;
 };
 
 #endif //GLTFOBJECT_H

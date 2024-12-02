@@ -5,26 +5,16 @@
 #include "Cube.h"
 
 #include <iostream>
-#include <glm/detail/type_mat4x4.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <render/shader.h>
 
-Cube::Cube() : Cube(glm::vec3(0.0f), glm::vec3(10.0f)){
+
+Cube::Cube() : Cube(default_vertex_buffer_data, default_color_buffer_data, default_normal_buffer_data, default_index_buffer_data){
 }
 
-Cube::Cube(const glm::vec3 position, const glm::vec3 scale) : Cube(position, scale, default_vertex_buffer_data, default_color_buffer_data, default_normal_buffer_data, default_index_buffer_data){
-}
-
-Cube::Cube(const glm::vec3 position, const glm::vec3 scale, GLuint programId) : Cube(position, scale, default_vertex_buffer_data, default_color_buffer_data, default_normal_buffer_data, default_index_buffer_data, programId) {
-}
-
-Cube::Cube(const glm::vec3 position, const glm::vec3 scale, const std::vector<GLfloat> &vertex_buffer_data, const std::vector<GLfloat> &color_buffer_data, const std::vector<GLfloat> &normal_buffer_data, const std::vector<GLuint> &index_buffer_data) : Cube(position, scale, vertex_buffer_data, color_buffer_data, normal_buffer_data, index_buffer_data, LoadShadersFromFile("../final_project/shaders/skybox/box.vert", "../final_project/shaders/skybox/box.frag")){
-}
-
-Cube::Cube(const glm::vec3 position, const glm::vec3 scale, const std::vector<GLfloat> &vertex_buffer_data, const std::vector<GLfloat> &color_buffer_data, const std::vector<GLfloat> &normal_buffer_data, const std::vector<GLuint> &index_buffer_data, GLuint programID) {
+Cube::Cube(const std::vector<GLfloat> &vertex_buffer_data, const std::vector<GLfloat> &color_buffer_data, const std::vector<GLfloat> &normal_buffer_data, const std::vector<GLuint> &index_buffer_data) : GraphicsObject("../final_project/shaders/skybox/box.vert","../final_project/shaders/skybox/box.frag"){
     this->position = position;
     this->scale = scale;
-    this->programID = programID;
 
     // Create a vao object
     glGenVertexArrays(1, &vaoID);
@@ -55,39 +45,15 @@ Cube::Cube(const glm::vec3 position, const glm::vec3 scale, const std::vector<GL
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferID);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER,  static_cast<GLsizeiptr>(normal_buffer_data.size()*sizeof(GLuint)), index_buffer_data.data(), GL_STATIC_DRAW);
 
-    // Create and compile our GLSL program from the shader
-    mvpMatrixID = glGetUniformLocation(this->programID, "MVP");
-
     glBindVertexArray(0);
 }
 
-GLuint Cube::getProgramID() const {
-    return programID;
-}
-
-void Cube::render(glm::mat4 &cameraMatrix, Light light) {
-    glUseProgram(programID);
+void Cube::render(glm::mat4 &cameraMatrix, const Light light) {
+    GraphicsObject::render(cameraMatrix, light);
 
     glBindVertexArray(vaoID);
 
     loadBuffers();
-
-    glm::mat4 mvp = cameraMatrix;
-
-    if(!glm::isnan(scale.x)) {
-        auto modelMatrix = glm::mat4();
-
-        // Translate the box to its position
-        modelMatrix = translate(modelMatrix, position);
-
-        // Scale the box along each axis
-        modelMatrix = glm::scale(modelMatrix, scale);
-
-        mvp *= modelMatrix;
-    }
-
-    // ------------------------------------
-    glUniformMatrix4fv(static_cast<int>(mvpMatrixID), 1, GL_FALSE, &mvp[0][0]);
 
     // Draw the box
     glDrawElements(
@@ -128,10 +94,10 @@ void Cube::loadBuffers() {
 }
 
 void Cube::cleanup(){
+    GraphicsObject::cleanup();
     glDeleteBuffers(1, &vertexBufferID);
     glDeleteBuffers(1, &colorBufferID);
     glDeleteBuffers(1, &indexBufferID);
     glDeleteBuffers(1, &normalBufferID);
     glDeleteVertexArrays(1, &vertexArrayID);
-    glDeleteProgram(programID);
 }

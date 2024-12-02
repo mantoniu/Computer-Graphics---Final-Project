@@ -13,7 +13,9 @@
 
 #include "../../texture_utils/texture_utils.h"
 
-SkyBox::SkyBox() : Cube(glm::vec3(0), glm::vec3(100), default_vertex_buffer_data, default_color_buffer_data, default_normal_buffer_data, skybox_index_buffer_data){
+SkyBox::SkyBox() : Cube(default_vertex_buffer_data, default_color_buffer_data, default_normal_buffer_data, skybox_index_buffer_data){
+    setScale(glm::vec3(100.0));
+
     // Enable UV buffer and texture
     glGenBuffers(1, &uvBufferID);
     glBindBuffer(GL_ARRAY_BUFFER, uvBufferID);
@@ -24,7 +26,7 @@ SkyBox::SkyBox() : Cube(glm::vec3(0), glm::vec3(100), default_vertex_buffer_data
     std::cout << "Texture path: " << texturePath << std::endl;
     textureID = LoadTextureTileBox(texturePath.c_str());
 
-    textureSamplerID = glGetUniformLocation(getProgramID(), "textureSampler");
+    textureSamplerID = glGetUniformLocation(getProgramId(), "textureSampler");
 }
 
 void SkyBox::loadBuffers() {

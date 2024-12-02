@@ -157,18 +157,12 @@ class Cube: public GraphicsObject{
         GLuint colorBufferID;
 
         // Shader variable IDs
-        GLuint mvpMatrixID;
-        GLuint programID;
         GLuint vaoID;
 
     public:
-        virtual ~Cube() = default;
+        ~Cube() override = default;
         Cube();
-        Cube(glm::vec3 position, glm::vec3 scale);
-        Cube(glm::vec3 position, glm::vec3 scale, GLuint programID);
-        Cube(glm::vec3 position, glm::vec3 scale, const std::vector<GLfloat> &vertex_buffer_data, const std::vector<GLfloat> &color_buffer_data, const std::vector<GLfloat> &normal_buffer_data, const std::vector<GLuint> &index_buffer_data);
-        Cube(glm::vec3 position, glm::vec3 scale, const std::vector<GLfloat> &vertex_buffer_data, const std::vector<GLfloat> &color_buffer_data, const std::vector<GLfloat> &normal_buffer_data, const std::vector<GLuint> &index_buffer_data, GLuint programID);
-        [[nodiscard]] GLuint getProgramID() const;
+        Cube(const std::vector<GLfloat> &vertex_buffer_data, const std::vector<GLfloat> &color_buffer_data, const std::vector<GLfloat> &normal_buffer_data, const std::vector<GLuint> &index_buffer_data);
 
         void render(glm::mat4 &cameraMatrix, Light light) override;
         void cleanup() override;

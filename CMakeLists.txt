@@ -27,6 +27,7 @@ add_executable(final_project
     final_project/light/Light.cpp
     final_project/tinygltf_implementation.cpp
     final_project/objects/graphics_object/GraphicsObject.h
+        final_project/objects/graphics_object/GraphicsObject.cpp
 )
 
 target_link_libraries(final_project
