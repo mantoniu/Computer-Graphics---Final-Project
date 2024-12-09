@@ -23,11 +23,9 @@ add_executable(final_project
     final_project/Objects/Cube/Cube.cpp
     final_project/Objects/skybox/SkyBox.cpp
     final_project/texture_utils/texture_utils.cpp
-    final_project/objects/gltf_object/GltfObject.cpp
-    final_project/light/Light.cpp
+    final_project/objects/gltf_object/GltfObject.cpp final_project/light/light/Light.cpp
     final_project/tinygltf_implementation.cpp
-    final_project/objects/graphics_object/GraphicsObject.h
-        final_project/objects/graphics_object/GraphicsObject.cpp
+    final_project/objects/graphics_object/GraphicsObject.h final_project/objects/graphics_object/GraphicsObject.cpp final_project/light/lights_manager/LightsManager.cpp final_project/light/lights_manager/LightsManager.h
 )
 
 target_link_libraries(final_project
