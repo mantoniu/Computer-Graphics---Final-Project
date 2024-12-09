@@ -164,7 +164,7 @@ class Cube: public GraphicsObject{
         Cube();
         Cube(const std::vector<GLfloat> &vertex_buffer_data, const std::vector<GLfloat> &color_buffer_data, const std::vector<GLfloat> &normal_buffer_data, const std::vector<GLuint> &index_buffer_data);
 
-        void render(glm::mat4 &cameraMatrix, Light light) override;
+        void render(glm::mat4 &cameraMatrix) override;
         void cleanup() override;
         virtual void disableVertexAttribArrays();
         virtual void loadBuffers();
