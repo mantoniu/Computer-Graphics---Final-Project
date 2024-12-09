@@ -7,7 +7,10 @@
 #include <iostream>
 #include <ostream>
 #include <glm/gtc/matrix_transform.hpp>
+#include <objects/cube/Cube.h>
 #include <render/shader.h>
+
+#include "light/lights_manager/LightsManager.h"
 
 GraphicsObject::GraphicsObject(const std::string& vertexShaderPath, const std::string& fragmentShaderPath) {
     GLuint progID = LoadShadersFromFile(vertexShaderPath.c_str(), fragmentShaderPath.c_str());
@@ -47,7 +50,7 @@ void GraphicsObject::setRotation(const float rotation, const glm::vec3 rotationA
     this->rotationAxis = rotationAxis;
 }
 
-void GraphicsObject::render(glm::mat4 &cameraMatrix, Light light) {
+void GraphicsObject::render(glm::mat4 &cameraMatrix) {
     glUseProgram(programId);
 
     // Load the MVP matrix for the shader

@@ -6,8 +6,7 @@
 #define GRAPHICS_OBJECT_H
 #include <string>
 #include <glm/detail/type_vec.hpp>
-#include <light/Light.h>
-
+#include <light/light/Light.h>
 #include "glad/gl.h"
 
 class GraphicsObject {
@@ -31,7 +30,7 @@ class GraphicsObject {
         void setScale(glm::vec3 scale);
         [[nodiscard]] GLuint getProgramId() const;
 
-        virtual void render(glm::mat4 &cameraMatrix, Light light) = 0;
+        virtual void render(glm::mat4 & cameraMatrix) = 0;
         virtual void cleanup();
 };
 
