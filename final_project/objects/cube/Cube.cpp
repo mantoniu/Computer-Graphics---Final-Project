@@ -48,8 +48,8 @@ Cube::Cube(const std::vector<GLfloat> &vertex_buffer_data, const std::vector<GLf
     glBindVertexArray(0);
 }
 
-void Cube::render(glm::mat4 &cameraMatrix, const Light light) {
-    GraphicsObject::render(cameraMatrix, light);
+void Cube::render(glm::mat4 & cameraMatrix) {
+    GraphicsObject::render(cameraMatrix);
 
     glBindVertexArray(vaoID);
 
