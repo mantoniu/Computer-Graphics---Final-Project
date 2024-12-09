@@ -11,11 +11,10 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <objects/cube/Cube.h>
 #include <render/shader.h>
 #include <texture_utils/texture_utils.h>
-
-
-#include "light/Light.h"
+#include "light/light/Light.h"
 
 GltfObject::GltfObject(const std::string& filePath) : GltfObject(filePath, false){}
 
@@ -31,7 +30,8 @@ GltfObject::GltfObject(const std::string& filePath, bool animated) : GraphicsObj
 	primitiveObjects = bindModel(model);
 
 	// Prepare joint matrices
-	skinObjects = prepareSkinning(model);
+	if (animated)
+		skinObjects = prepareSkinning(model);
 
 	// Prepare animation data
 	animationObjects = prepareAnimation(model);
@@ -49,14 +49,6 @@ GltfObject::GltfObject(const std::string& filePath, bool animated) : GraphicsObj
 		std::cerr << "Failed to load metallic roughness textures." << std::endl;
 	}
 
-	lightPositionID = glGetUniformLocation(getProgramId(), "lightPosition");
-	if (lightPositionID == -1) {
-		std::cerr << "Uniform 'lightPosition' not found in shader." << std::endl;
-	}
-	lightIntensityID = glGetUniformLocation(getProgramId(), "lightIntensity");
-	if (lightIntensityID == -1) {
-		std::cerr << "Uniform 'lightIntensity' not found in shader." << std::endl;
-	}
 	jointMatricesID = glGetUniformLocation(getProgramId(), "jointMatrices");
 }
 
@@ -351,18 +343,11 @@ void GltfObject::bindMesh(std::vector<PrimitiveObject>& primitiveObjects, const 
             continue;
         }
 
-    	GLint metMaterialIDLocation = glGetUniformLocation(getProgramId(), "metTextureIndex");
-    	glUniform1i(metMaterialIDLocation,
-    		(metallicRoughnessMaterialIndices.find(primitive.material) != metallicRoughnessMaterialIndices.end()) ? metallicRoughnessTexturesIndices[primitive.material] : -1);
-
-    	if (baseColorMaterialIndices.find(primitive.material) != baseColorMaterialIndices.end()) {
-    		GLint materialIDLocation = glGetUniformLocation(getProgramId(), "colorTextureIndex");
-    		glUniform1i(materialIDLocation, baseColorMaterialIndices[primitive.material]);
-    	}
-
         PrimitiveObject primitiveObject;
         glGenVertexArrays(1, &primitiveObject.vao);
         glBindVertexArray(primitiveObject.vao);
+
+    	std::cout << "VAO ID: " << primitiveObject.vao << std::endl;
 
         // Gestion des indices
         const tinygltf::Accessor& indexAccessor = model.accessors[primitive.indices];
@@ -380,9 +365,9 @@ void GltfObject::bindMesh(std::vector<PrimitiveObject>& primitiveObjects, const 
         primitiveObject.vbos[GL_ELEMENT_ARRAY_BUFFER] = indexBufferID;
 
         // Debug print
-        std::cout << "Index buffer length: " << indexBufferView.byteLength
-                  << ", Offset: " << indexBufferView.byteOffset
-                  << ", Stride: " << indexBufferView.byteStride << std::endl;
+    	std::cout << "Index buffer ID: " << indexBufferID
+				  << ", Byte length: " << indexBufferView.byteLength << std::endl;
+
 
         // Gestion des attributs de vertex
         for (const auto& attrib : primitive.attributes) {
@@ -392,6 +377,7 @@ void GltfObject::bindMesh(std::vector<PrimitiveObject>& primitiveObjects, const 
             if (attrib.first == "TEXCOORD_0") vaa = 2;
         	if (attrib.first == "JOINTS_0") vaa = 3;
         	if (attrib.first == "WEIGHTS_0") vaa = 4;
+        	if (attrib.first == "COLOR_0") vaa = 5;
 
             if (vaa < 0) continue;
 
@@ -430,6 +416,7 @@ void GltfObject::bindModelNodes(std::vector<PrimitiveObject> &primitiveObjects,
 	// Bind buffers for the current mesh at the node
 	if ((node.mesh >= 0) && (node.mesh < model.meshes.size())) {
 		bindMesh(primitiveObjects, model, model.meshes[node.mesh]);
+		glBindVertexArray(0);
 	}
 
 	// Recursive into children nodes
@@ -458,8 +445,8 @@ GLuint GltfObject::initTextureArrays(std::vector<int> textureIndices) const {
     glBindTexture(GL_TEXTURE_2D_ARRAY, textureArrayID);
 
     // Dimensions uniformes pour toutes les textures
-    int width = 2048;
-    int height = 2048;
+    int width = 1024;
+    int height = 1024;
     int layerCount = textureIndices.size();
 
     // Allouer de la mémoire pour le tableau de textures
@@ -505,86 +492,32 @@ GLuint GltfObject::initTextureArrays(std::vector<int> textureIndices) const {
 void GltfObject::loadMaterials() {
     for (int i=0; i<model.materials.size(); i++) {
     	const auto material = model.materials[i];
-		Material materialData{};
-
-		// Default values of metallic, roughness and baseColor factors
-    	float metallic, roughness = 0.0f;
-    	auto baseColor = glm::vec4(1.0f);
-    	glm::vec3 emissiveColor(0.0f);
+		Material materialData;
 
     	if (material.values.find("baseColorTexture") != material.values.end()) {
             int textureIndex = material.values.at("baseColorTexture").TextureIndex();
 
-    		materialData.hasBaseColorTexture = 1;
     		baseColorMaterialIndices[i] = colorTexturesCount++;
     		baseColorTexturesIndices.push_back(textureIndex);
     	}
     	else if (material.values.find("baseColorFactor") != material.values.end()) {
-    		//TODO
             const auto& colorFactor = material.values.at("baseColorFactor").ColorFactor();
-            baseColor = glm::vec4(colorFactor[0], colorFactor[1], colorFactor[2], colorFactor[3]);
-
-    		materialData.hasBaseColorTexture = 0;
-    		materialData.baseColorFactor= baseColor;
-        }
+            materialData.baseColorFactor = glm::vec4(colorFactor[0], colorFactor[1], colorFactor[2], colorFactor[3]);
+    	}
 
         if (material.values.find("metallicRoughnessTexture") != material.values.end()) {
             int textureIndex = material.values.at("metallicRoughnessTexture").TextureIndex();
 
-        	materialData.hasMetallicRoughnessTexture = 1;
-        	metallicRoughnessMaterialIndices[i] = metaliicRoughnessTextureCount++;
+        	metallicRoughnessMaterialIndices[i] = metallicRoughnessTextureCount++;
         	metallicRoughnessTexturesIndices.push_back(textureIndex);
-        } else {
-            if (material.values.find("metallicFactor") != material.values.end()) {
-                metallic = material.values.at("metallicFactor").Factor();
-
-            	materialData.hasMetallicRoughnessTexture = 0;
-            	materialData.metallicFactor = metallic;
-            }
-            if (material.values.find("roughnessFactor") != material.values.end()) {
-                roughness = material.values.at("roughnessFactor").Factor();
-
-            	materialData.hasMetallicRoughnessTexture = 0;
-            	materialData.roughnessFactor = roughness;
-            }
         }
-
-        if (material.additionalValues.find("normalTexture") != material.additionalValues.end()) {
-            int textureIndex = material.additionalValues.at("normalTexture").TextureIndex();
-
-        	materialData.hasNormalTexture = 1;
-        	//normalTextures[primitive.material] = loadTexture(textureIndex);
-        }
-
-        if (material.additionalValues.find("emissiveTexture") != material.additionalValues.end()) {
-            int textureIndex = material.additionalValues.at("emissiveTexture").TextureIndex();
-
-        	materialData.hasEmissiveTexture = 1;
-			//emissiveTextures[primitive.material] = loadTexture(textureIndex);
-        }
-    	else if (material.additionalValues.find("emissiveFactor") != material.additionalValues.end()) {
+    	if (material.additionalValues.find("emissiveFactor") != material.additionalValues.end()) {
             const auto& emissiveFactor = material.additionalValues.at("emissiveFactor").ColorFactor();
-            emissiveColor = glm::vec3(emissiveFactor[0], emissiveFactor[1], emissiveFactor[2]);
-
-    		materialData.hasEmissiveTexture = 0;
-    		materialData.emissiveFactor = emissiveColor;
+			materialData.emissiveFactor = glm::vec3(emissiveFactor[0], emissiveFactor[1], emissiveFactor[2]);
         }
 
-        if (material.additionalValues.find("occlusionTexture") != material.additionalValues.end()) {
-            int textureIndex = material.additionalValues.at("occlusionTexture").TextureIndex();
-
-        	materialData.hasOcclusionTexture = 1;
-        	//occlusionTextures[primitive.material] = loadTexture(textureIndex);
-        }
-
-		//materialsData[primitive.material] = materialData;
+    	materialsData[i] = materialData;
     }
-}
-
-void GltfObject::uploadMaterialData() {
-	glBindBuffer(GL_UNIFORM_BUFFER, uboMaterials);
-	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(Material) * 100, materialsData);
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
 void GltfObject::drawMesh(const std::vector<PrimitiveObject> &primitiveObjects,
@@ -596,6 +529,17 @@ void GltfObject::drawMesh(const std::vector<PrimitiveObject> &primitiveObjects,
         const tinygltf::Primitive& primitive = mesh.primitives[i];
 
         const tinygltf::Accessor& indexAccessor = model.accessors[primitive.indices];
+
+
+    	GLint metMaterialIDLocation = glGetUniformLocation(getProgramId(), "metTextureIndex");
+    	glUniform1i(metMaterialIDLocation,
+			(metallicRoughnessMaterialIndices.find(primitive.material) != metallicRoughnessMaterialIndices.end()) ? metallicRoughnessTexturesIndices[primitive.material] : -1);
+
+    	GLint materialIDLocation = glGetUniformLocation(getProgramId(), "colorTextureIndex");
+    	glUniform1i(materialIDLocation, (baseColorMaterialIndices.find(primitive.material) != baseColorMaterialIndices.end()) ? baseColorMaterialIndices[primitive.material] : -1);
+
+    	materialIDLocation = glGetUniformLocation(getProgramId(), "baseColorFactor");
+    	glUniform4fv(materialIDLocation, 1, value_ptr(materialsData[primitive.material].baseColorFactor));
 
         glDrawElements(primitive.mode,
                        static_cast<int>(indexAccessor.count),
@@ -623,16 +567,21 @@ void GltfObject::drawModel(const std::vector<PrimitiveObject>& primitiveObjects,
 			tinygltf::Model &model) {
 	// Draw all nodes
 	const tinygltf::Scene &scene = model.scenes[model.defaultScene];
+
+	if (scene.nodes.empty()) {
+		std::cerr << "Error: No nodes found in the default scene." << std::endl;
+		return;
+	}
+
 	for (int node : scene.nodes) {
 		drawModelNodes(primitiveObjects, model, model.nodes[node]);
 	}
 }
 
-void GltfObject::render(glm::mat4 &cameraMatrix, Light light) {
-	GraphicsObject::render(cameraMatrix, light);
+void GltfObject::render(glm::mat4 & cameraMatrix) {
+	GraphicsObject::render(cameraMatrix);
 
 	// Set animation data for linear blend skinning in shader
-
 	for (const auto& skinObject : skinObjects)
 		glUniformMatrix4fv(static_cast<GLint>(jointMatricesID), static_cast<int>(skinObject.jointMatrices.size()), GL_FALSE, glm::value_ptr(skinObject.jointMatrices[0]));
 
@@ -650,13 +599,6 @@ void GltfObject::render(glm::mat4 &cameraMatrix, Light light) {
 	glBindTexture(GL_TEXTURE_2D_ARRAY, metallicRoughnessTextureID);
 
 	location = glGetUniformLocation(getProgramId(), "metTextureArray");
-	if (location == -1) {
-		std::cerr << "Error: uniform 'metTextureArray' not found in shader program." << std::endl;
-	} else glUniform1i(location, 1);
-
-	// Set light data
-	glUniform3fv(static_cast<GLint>(lightPositionID), 1, &(light.getPosition())[0]);
-	glUniform3fv(static_cast<GLint>(lightIntensityID), 1, &(light.getIntensity())[0]);
 
 	GLint metMaterialIDLocation = glGetUniformLocation(getProgramId(), "animated");
 	glUniform1i(metMaterialIDLocation, animated);

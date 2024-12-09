@@ -8,23 +8,19 @@
 #include <glm/detail/type_vec.hpp>
 
 #include "glad/gl.h"
-#include "light/Light.h"
+#include "light/light/Light.h"
 #include <tiny_gltf.h>
+
+#include "light/lights_manager/LightsManager.h"
 #include "objects/graphics_object/GraphicsObject.h"
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
 
 // Texture types
 struct Material {
-	glm::vec4 baseColorFactor;
-	glm::vec3 emissiveFactor;
-	float metallicFactor;
-	float roughnessFactor;
-	float occlusionFactor;
-	int hasBaseColorTexture;
-	int hasMetallicRoughnessTexture;
-	int hasNormalTexture;
-	int hasEmissiveTexture;
-	int hasOcclusionTexture;
+	glm::vec4 baseColorFactor = glm::vec4(1.0f);
+	glm::vec3 emissiveFactor = glm::vec3(1.0f);
+	glm::vec3 ambientFactor = glm::vec3(1.0f);
+	glm::vec3 roughnessFactor = glm::vec3(1.0f);
 };
 
 // Each VAO corresponds to each mesh primitive in the GLTF graphics_object
@@ -67,8 +63,6 @@ class GltfObject : public GraphicsObject{
 		// Shader variable IDs
 		GLuint mvpMatrixID;
 		GLuint jointMatricesID;
-		GLuint lightPositionID;
-		GLuint lightIntensityID;
 
 		int animated;
 
@@ -86,10 +80,10 @@ class GltfObject : public GraphicsObject{
 		// metallic roughness
 		std::map<int, int> metallicRoughnessMaterialIndices;
 		std::vector<int> metallicRoughnessTexturesIndices;
-	    int metaliicRoughnessTextureCount = 0;
+	    int metallicRoughnessTextureCount = 0;
 
 		// Material array
-		Material materialsData[100];
+		std::map<int, Material> materialsData;
 
 		// Textures arrays
 		GLuint colorTexturesID;
@@ -147,7 +141,7 @@ class GltfObject : public GraphicsObject{
 		void drawModelNodes(const std::vector<PrimitiveObject>& primitiveObjects, tinygltf::Model &model, const tinygltf::Node &node);
 		void drawModel(const std::vector<PrimitiveObject>& primitiveObjects, tinygltf::Model &model);
 
-		void render(glm::mat4 &cameraMatrix, Light light) override;
+		void render(glm::mat4 & cameraMatrix) override;
 };
 
 #endif //GLTFOBJECT_H
