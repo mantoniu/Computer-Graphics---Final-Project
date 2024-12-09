@@ -6,11 +6,13 @@ layout(location = 1) in vec3 vertexNormal;   // Normale du vertex
 layout(location = 2) in vec2 vertexUV;       // Coordonnées de texture
 layout(location = 3) in vec4 a_joint;
 layout(location = 4) in vec4 a_weight;
+layout(location = 5) in vec4 m_color;
 
 // Output data, to be interpolated for each fragment
 out vec3 worldPosition;  // Position du vertex dans l'espace du monde
 out vec3 worldNormal;    // Normale dans l'espace du monde
 out vec2 texCoord;       // Coordonnées de texture pour le fragment
+out vec4 color;
 flat out int texIndex;
 flat out int metTexIndex;
 
@@ -47,4 +49,5 @@ void main() {
     texCoord = vertexUV;
     texIndex = colorTextureIndex;
     metTexIndex = metTextureIndex;
+    color = m_color;
 }
