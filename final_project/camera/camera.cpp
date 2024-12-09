@@ -1,31 +1,40 @@
 #include "camera.h"
+
+#include <glm/gtc/matrix_transform.hpp>
+
 #include "iostream"
 
-Camera::Camera(float viewAzimuth, float viewPolar, float viewDistance, float sensitivity){
-    this->eyeCenter = glm::vec3(0,0,0);
+Camera::Camera(float viewAzimuth, float viewPolar, glm::vec3 eyeCenter, float sensitivity){
+    this->eyeCenter = eyeCenter;
     this->viewAzimuth = viewAzimuth;
     this->viewPolar = viewPolar;
-    this->viewDistance = viewDistance;
     this->sensitivity = sensitivity;
 }
 
-glm::vec3 Camera::getLookat(){
+glm::vec3 Camera::getLookAt() const {
     return glm::vec3(cos(viewPolar)*sin(viewAzimuth),sin(viewPolar), cos(viewPolar)*cos(viewAzimuth)) + eyeCenter;
 }
 
-glm::vec3 Camera::getUp(){
+glm::vec3 Camera::getUp() const {
     return up;
 }
 
-glm::mat4 Camera::getViewMatrix(){
-    return glm::lookAt(eyeCenter, getLookat(), getUp());
+glm::mat4 Camera::getViewMatrix() const {
+    return lookAt(eyeCenter, getLookAt(), getUp());
 }
 
+glm::mat4 Camera::getProjectionMatrix() const {
+    return glm::perspective(glm::radians(FoV), 4.0f / 3.0f, zNear, zFar);
+}
+
+glm::mat4 Camera::getVPMatrix() const {
+     return getProjectionMatrix() * getViewMatrix();
+}
 
 void Camera::onKeyPress(GLFWwindow *window) {
-    const float moveSpeed = 0.5f;
-    glm::vec3 forward = normalize(getLookat() - eyeCenter);
-    glm::vec3 right = normalize(cross(forward, getUp()));
+    constexpr float moveSpeed = 0.5f;
+    const glm::vec3 forward = normalize(getLookAt() - eyeCenter);
+    const glm::vec3 right = normalize(cross(forward, getUp()));
 
     if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
         eyeCenter = glm::vec3(0.0f, 0.0f, 10.0f);
@@ -54,17 +63,17 @@ void Camera::onKeyPress(GLFWwindow *window) {
 }
 
 
-void Camera::onMouseChange(GLFWwindow* window, double xpos, double ypos) {
+void Camera::onMouseChange(GLFWwindow* window, const double xPos, const double yPos) {
     if (firstMouse) {
-        lastX = xpos;
-        lastY = ypos;
+        lastX = xPos;
+        lastY = yPos;
         firstMouse = false;
     }
 
-    float xOffset = xpos - lastX;
-    float yOffset = lastY - ypos;
-    lastX = xpos;
-    lastY = ypos;
+    float xOffset = xPos - lastX;
+    float yOffset = lastY - yPos;
+    lastX = xPos;
+    lastY = yPos;
 
     xOffset *= sensitivity;
     yOffset *= sensitivity;
