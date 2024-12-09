@@ -9,12 +9,14 @@
 #include "Objects/skybox/SkyBox.h"
 #include "objects/gltf_object/GltfObject.h"
 
-#include "light/Light.h"
 #include "camera/camera.h"
+#include <light/light/Light.h>
 
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/detail/type_mat.hpp>
 #include <glm/detail/type_vec.hpp>
+
+#include "light/lights_manager/LightsManager.h"
 
 
 static GLFWwindow *window;
@@ -28,14 +30,10 @@ std::mt19937 gen(rd());
 // View control 
 static float viewAzimuth = 0;
 static float viewPolar = 0;
-static float viewDistance = 10.0f;
-
-// Lighting
-Light light(glm::vec3(5e6f, 5e6f, 5e6f), glm::vec3(-275.0f, 500.0f, 800.0f));
 
 // OpenGL camera view parameters
 float cameraSensitivity = 0.001f;
-Camera camera = Camera(viewAzimuth, viewPolar, viewDistance, cameraSensitivity);
+Camera camera = Camera(viewAzimuth, viewPolar, glm::vec3(0, 80, 120), cameraSensitivity);
 
 int main()
 {
@@ -81,22 +79,17 @@ int main()
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 
-
     // ---------------------------
 
-	glm::float32 FoV = 45;
-	glm::float32 zNear = 0.1f;
-	glm::float32 zFar = 1000.0f;
-	glm::mat4 projectionMatrix = glm::perspective(glm::radians(FoV), 4.0f / 3.0f, zNear, zFar);
-
-	auto bot = GltfObject("../final_project/3d_assets/shiba/scene.gltf");
-	auto suzanne = GltfObject("../final_project/3d_assets/suzanne/Suzanne.gltf");
+	auto light = Light(glm::vec3(5e6f, 5e6f, 5e6f), glm::vec3(-275.0f, 250.0f, 300.0f));
+	auto light2 = Light(glm::vec3(5e6f, 5e6f, 5e6f), glm::vec3(-275.0f, 500.0f, 400.0f));
+	auto bot = GltfObject("../final_project/3d_assets/island/untitled.gltf");
 	auto skybox = SkyBox();
-	bot.setScale(glm::vec3(0.3f));
-	bot.setRotation(-90.0f, glm::vec3(1, 0, 0));
+	bot.setScale(glm::vec3(1.0f));
 
+	std::vector<GraphicsObject *> objects = {&skybox, &bot};
 
-	std::vector<GraphicsObject *> objects = {&bot, &skybox, &suzanne};
+	auto lightsManager = LightsManager(std::vector{light, light2}, objects);
 
 	// Time and frame rate tracking
 	static double lastTime = glfwGetTime();
@@ -120,11 +113,14 @@ int main()
 			bot.update(time);
 		}
 
-		glm::mat4 vp = projectionMatrix * camera.getViewMatrix();
+		glm::mat4 vp = camera.getVPMatrix();
+
+		// Compute depths textures
+		lightsManager.render();
 
 		// Render the buildings
 		for (auto object : objects)
-			object->render(vp, light);
+			object->render(vp);
 
 		// FPS tracking
 		// Count number of frames over a few seconds and take average
@@ -150,6 +146,8 @@ int main()
 	// Clean up
 	for (auto object : objects)
 		object->cleanup();
+
+	lightsManager.clean();
 
 	// Close OpenGL window and terminate GLFW
 	glfwTerminate();
