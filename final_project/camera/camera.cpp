@@ -37,6 +37,18 @@ void Camera::onKeyPress(GLFWwindow *window) {
     const glm::vec3 forward = normalize(getLookAt() - eyeCenter);
     const glm::vec3 right = normalize(cross(forward, getUp()));
 
+    static bool cKeyWasPressed = false;
+
+    if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS) {
+        if (!cKeyWasPressed) {
+            std::cout << "Camera debug " << (debug ? "disabled" : "enabled") << std::endl;
+            debug = !debug;
+        }
+        cKeyWasPressed = true;
+    } else {
+        cKeyWasPressed = false;
+    }
+
     if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
         eyeCenter = glm::vec3(0.0f, 0.0f, 10.0f);
         std::cout << "Position reset." << std::endl;
@@ -61,8 +73,7 @@ void Camera::onKeyPress(GLFWwindow *window) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, GL_TRUE);
     }
-
-    std::cout << "Position = [x: " << eyeCenter.x << ", y: " << eyeCenter.y << ", z: " << eyeCenter.z << "]" <<std::endl;
+    displayData();
 }
 
 
@@ -86,5 +97,11 @@ void Camera::onMouseChange(GLFWwindow* window, const float xPos, const float yPo
 
     if (viewPolar > glm::radians(89.0f)) viewPolar = glm::radians(89.0f);
     if (viewPolar < glm::radians(-89.0f)) viewPolar = glm::radians(-89.0f);
-    std::cout << "View Polar : " << viewPolar << ", View azimuth : " << viewAzimuth << std::endl;
+    displayData();
+}
+
+void Camera::displayData() const {
+    if (debug)
+        std::cout << "Position = [x: " << eyeCenter.x << ", y: " << eyeCenter.y << ", z: " << eyeCenter.z << "] - "
+        << "View Polar : " << viewPolar << ", View azimuth : " << viewAzimuth << std::endl;
 }
