@@ -10,7 +10,7 @@
 #include <objects/cube/Cube.h>
 #include <render/shader.h>
 
-#include "light/lights_manager/LightsManager.h"
+#include "lighting/lights_manager/LightsManager.h"
 
 GraphicsObject::GraphicsObject(const std::string& vertexShaderPath, const std::string& fragmentShaderPath) {
     GLuint progID = LoadShadersFromFile(vertexShaderPath.c_str(), fragmentShaderPath.c_str());
@@ -26,6 +26,8 @@ GraphicsObject::GraphicsObject(const std::string& vertexShaderPath, const std::s
     if (mvpMatrixID == -1) {
         std::cerr << "Uniform 'MVP' not found in shader." << std::endl;
     }
+
+    modelMatrixID = glGetUniformLocation(progID, "modelMatrix");
 }
 
 
@@ -55,11 +57,14 @@ void GraphicsObject::render(glm::mat4 &cameraMatrix) {
 
     // Load the MVP matrix for the shader
     glm::mat4 mvp = cameraMatrix * getModelMatrix();
+    glUniformMatrix4fv(static_cast<int>(modelMatrixID), 1, GL_FALSE, &getModelMatrix()[0][0]);
     glUniformMatrix4fv(static_cast<int>(mvpMatrixID), 1, GL_FALSE, &mvp[0][0]);
 }
 
 void GraphicsObject::cleanup() {
     glDeleteProgram(programId);
+    glDeleteBuffers(1, &mvpMatrixID);
+    glDeleteTextures(1, &modelMatrixID);
 }
 
 GLuint GraphicsObject::getProgramId() const {

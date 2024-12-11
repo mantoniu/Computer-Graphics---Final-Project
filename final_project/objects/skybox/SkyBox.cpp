@@ -6,8 +6,6 @@
 
 #include <iostream>
 #include <ostream>
-#include <glm/detail/func_common.hpp>
-#include <glm/detail/type_mat4x4.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <render/shader.h>
 

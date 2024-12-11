@@ -14,7 +14,7 @@
 #include <objects/cube/Cube.h>
 #include <render/shader.h>
 #include <texture_utils/texture_utils.h>
-#include "light/light/Light.h"
+#include "lighting/light/Light.h"
 
 GltfObject::GltfObject(const std::string& filePath) : GltfObject(filePath, false){}
 

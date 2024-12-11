@@ -4,7 +4,6 @@
 
 #include "LightsManager.h"
 #include <cstdarg>
-#include <iostream>
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "glad/gl.h"
@@ -49,10 +48,7 @@ void LightsManager::loadDepthTextures() {
     glViewport(0, 0, 2048, 2048);
 
     for (int i=0; i<lights.size(); i++) {
-        const glm::mat4 lightProjectionMatrix = glm::perspective(glm::radians(depthFoV), 1.0f, depthNear, depthFar);
-
-        const glm::mat4 lightViewMatrix = lookAt(lights[i].getPosition(), glm::vec3(0, 0, 0), glm::vec3(0, 0, 1));
-        glm::mat4 lightViewProjection = lightProjectionMatrix * lightViewMatrix;
+        glm::mat4 lightModelMatrix = lights[i].getSpaceMatrix();
 
         glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depthTexturesArray, 0, i);
         glClear(GL_DEPTH_BUFFER_BIT);
@@ -60,11 +56,10 @@ void LightsManager::loadDepthTextures() {
         for (const auto &object: objects) {
             glUseProgram(object->getProgramId());
 
-            object->render(lightViewProjection);
+            object->render(lightModelMatrix);
 
-            if (const GLint location = glGetUniformLocation(object->getProgramId(), "depthArray"); location == -1) {
-                std::cerr << "Error: uniform 'depthArray' not found in shader program." << std::endl;
-            } else glUniform1i(location, 2);
+            const GLint location = glGetUniformLocation(object->getProgramId(), "depthArray");
+            glUniform1i(location, 2);
         }
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -81,7 +76,7 @@ void LightsManager::loadLightsUBOs(){
     // Generate and bind the UBO
     glGenBuffers(1, &lightsUBO);
     glBindBuffer(GL_UNIFORM_BUFFER, lightsUBO);
-    glBufferData(GL_UNIFORM_BUFFER, uboSize, nullptr, GL_STATIC_DRAW);
+    glBufferData(GL_UNIFORM_BUFFER, static_cast<long long>(uboSize), nullptr, GL_STATIC_DRAW);
 
     // Load light data into the UBO
     lightStruct uboData[lights.size()];
@@ -90,7 +85,7 @@ void LightsManager::loadLightsUBOs(){
     }
 
     // Copy the data to the UBO
-    glBufferSubData(GL_UNIFORM_BUFFER, 0, uboSize, &uboData);
+    glBufferSubData(GL_UNIFORM_BUFFER, 0, static_cast<long long>(uboSize), &uboData);
 
     // Unbind the UBO
     glBindBuffer(GL_UNIFORM_BUFFER, 0);

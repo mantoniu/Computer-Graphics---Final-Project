@@ -8,10 +8,10 @@
 #include <glm/detail/type_vec.hpp>
 
 #include "glad/gl.h"
-#include "light/light/Light.h"
+#include "lighting/light/Light.h"
 #include <tiny_gltf.h>
 
-#include "light/lights_manager/LightsManager.h"
+#include "lighting/lights_manager/LightsManager.h"
 #include "objects/graphics_object/GraphicsObject.h"
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
 

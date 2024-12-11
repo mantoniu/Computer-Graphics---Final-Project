@@ -5,7 +5,7 @@
 #ifndef LIGHTS_MANAGER_H
 #define LIGHTS_MANAGER_H
 #include <vector>
-#include <light/light/Light.h>
+#include <lighting/light/Light.h>
 
 #include "glad/gl.h"
 #include "objects/graphics_object/GraphicsObject.h"
@@ -15,8 +15,8 @@ class LightsManager {
     private:
         // Depth perspective settings
         float depthFoV = 90.0f;
-        float depthNear = 200.0f;
-        float depthFar = 800.0f;
+        float depthNear = 1.0f;
+        float depthFar = 50.0f;
 
         GLuint depthTexturesArray = -1;
         GLuint depthFBO = -1;

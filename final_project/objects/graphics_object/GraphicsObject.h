@@ -6,7 +6,7 @@
 #define GRAPHICS_OBJECT_H
 #include <string>
 #include <glm/detail/type_vec.hpp>
-#include <light/light/Light.h>
+#include <lighting/light/Light.h>
 #include "glad/gl.h"
 
 class GraphicsObject {
@@ -18,6 +18,7 @@ class GraphicsObject {
 
         GLuint programId;
         GLuint mvpMatrixID;
+        GLuint modelMatrixID;
 
     public:
         explicit GraphicsObject(const std::string& vertexShaderPath, const std::string& fragmentShaderPath);

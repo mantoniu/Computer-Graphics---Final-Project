@@ -60,6 +60,8 @@ void Camera::onKeyPress(GLFWwindow *window) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, GL_TRUE);
     }
+
+    std::cout << "Position = [x: " << eyeCenter.x << ", y: " << eyeCenter.y << ", z: " << eyeCenter.z << "]" <<std::endl;
 }
 
 

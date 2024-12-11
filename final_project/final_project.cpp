@@ -10,13 +10,13 @@
 #include "objects/gltf_object/GltfObject.h"
 
 #include "camera/camera.h"
-#include <light/light/Light.h>
+#include <lighting/light/Light.h>
 
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/detail/type_mat.hpp>
 #include <glm/detail/type_vec.hpp>
 
-#include "light/lights_manager/LightsManager.h"
+#include "lighting/lights_manager/LightsManager.h"
 
 
 static GLFWwindow *window;
@@ -81,13 +81,21 @@ int main()
 
     // ---------------------------
 
-	auto light = Light(glm::vec3(5e6f, 5e6f, 5e6f), glm::vec3(-275.0f, 250.0f, 300.0f));
-	auto light2 = Light(glm::vec3(5e6f, 5e6f, 5e6f), glm::vec3(-275.0f, 500.0f, 400.0f));
-	auto bot = GltfObject("../final_project/3d_assets/island/untitled.gltf");
-	auto skybox = SkyBox();
-	bot.setScale(glm::vec3(1.0f));
+	auto light = Light(glm::vec3(28, 58, 51), 5000, glm::vec3(1), glm::vec3(0), 90, 5, 100);
+	auto light2 = Light(glm::vec3(-57, 22, 31), 3000, glm::vec3(1), glm::vec3(0), 90, 5, 100);
 
-	std::vector<GraphicsObject *> objects = {&skybox, &bot};
+	auto skybox = SkyBox();
+
+	auto zombie = GltfObject("../final_project/3d_assets/zombie/untitled.gltf", true);
+	zombie.setTranslation(glm::vec3(-17.6, -5.8, 16));
+	zombie.setScale(glm::vec3(0.09));
+	zombie.setRotation(90, glm::vec3(1,0, 0));
+
+	auto island = GltfObject("../final_project/3d_assets/island/untitled.gltf");
+	island.setRotation(-90, glm::vec3(1,0,0));
+	island.setScale(glm::vec3(1.0f));
+
+	std::vector<GraphicsObject *> objects = {&skybox, &island, &zombie};
 
 	auto lightsManager = LightsManager(std::vector{light, light2}, objects);
 
@@ -110,7 +118,7 @@ int main()
 
 		if (playAnimation) {
 			time += deltaTime * playbackSpeed;
-			bot.update(time);
+			zombie.update(time);
 		}
 
 		glm::mat4 vp = camera.getVPMatrix();
