@@ -1,10 +1,11 @@
 #include "camera.h"
 
+#include <cmath>
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "iostream"
 
-Camera::Camera(float viewAzimuth, float viewPolar, glm::vec3 eyeCenter, float sensitivity){
+Camera::Camera(const float viewAzimuth, const float viewPolar, const glm::vec3 eyeCenter, const float sensitivity){
     this->eyeCenter = eyeCenter;
     this->viewAzimuth = viewAzimuth;
     this->viewPolar = viewPolar;
@@ -12,7 +13,7 @@ Camera::Camera(float viewAzimuth, float viewPolar, glm::vec3 eyeCenter, float se
 }
 
 glm::vec3 Camera::getLookAt() const {
-    return glm::vec3(cos(viewPolar)*sin(viewAzimuth),sin(viewPolar), cos(viewPolar)*cos(viewAzimuth)) + eyeCenter;
+    return glm::vec3(std::cos(viewPolar)*std::sin(viewAzimuth),std::sin(viewPolar), std::cos(viewPolar)*std::cos(viewAzimuth)) + eyeCenter;
 }
 
 glm::vec3 Camera::getUp() const {
@@ -65,7 +66,7 @@ void Camera::onKeyPress(GLFWwindow *window) {
 }
 
 
-void Camera::onMouseChange(GLFWwindow* window, const double xPos, const double yPos) {
+void Camera::onMouseChange(GLFWwindow* window, const float xPos, const float yPos) {
     if (firstMouse) {
         lastX = xPos;
         lastY = yPos;
@@ -85,4 +86,5 @@ void Camera::onMouseChange(GLFWwindow* window, const double xPos, const double y
 
     if (viewPolar > glm::radians(89.0f)) viewPolar = glm::radians(89.0f);
     if (viewPolar < glm::radians(-89.0f)) viewPolar = glm::radians(-89.0f);
+    std::cout << "View Polar : " << viewPolar << ", View azimuth : " << viewAzimuth << std::endl;
 }

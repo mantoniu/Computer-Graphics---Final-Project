@@ -27,13 +27,9 @@ static void mouse_callback(GLFWwindow* window, double xPos, double yPos);
 std::random_device rd;  
 std::mt19937 gen(rd()); 
 
-// View control 
-static float viewAzimuth = 0;
-static float viewPolar = 0;
-
 // OpenGL camera view parameters
 float cameraSensitivity = 0.001f;
-Camera camera = Camera(viewAzimuth, viewPolar, glm::vec3(0, 80, 120), cameraSensitivity);
+auto camera = Camera(-3, -0.60, glm::vec3(-6, 40, 68), 0.001);
 
 int main()
 {
@@ -169,6 +165,6 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 	camera.onKeyPress(window);
 }
 
-static void mouse_callback(GLFWwindow* window, double xPos, double yPos){
-	camera.onMouseChange(window, xPos, yPos);
+static void mouse_callback(GLFWwindow* window, const double xPos, const double yPos){
+	camera.onMouseChange(window, static_cast<float>(xPos), static_cast<float>(yPos));
 }

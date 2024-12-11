@@ -15,7 +15,7 @@ class Camera{
         glm::float32 zFar = 1000.0f;
 
         bool firstMouse = true;         
-        float lastX, lastY;    
+        float lastX, lastY;
         float sensitivity;  
 
         glm::vec3 eyeCenter;
@@ -24,17 +24,17 @@ class Camera{
         float viewPolar;
 
         void updateEyeCenter();
-        glm::mat4 getViewMatrix() const;
-        glm::mat4 getProjectionMatrix() const;
+        [[nodiscard]] glm::mat4 getViewMatrix() const;
+        [[nodiscard]] glm::mat4 getProjectionMatrix() const;
 
     public:
         Camera(float viewAzimuth, float viewPolar, glm::vec3 eyeCenter, float sensitivity);
         void onKeyPress(GLFWwindow *window);
-        void onMouseChange(GLFWwindow* window, double xPos, double yPos);
+        void onMouseChange(GLFWwindow *window, float xPos, float yPos);
 
-        glm::mat4 getVPMatrix() const;
-        glm::vec3 getLookAt() const;
-        glm::vec3 getUp() const;
+        [[nodiscard]] glm::mat4 getVPMatrix() const;
+        [[nodiscard]] glm::vec3 getLookAt() const;
+        [[nodiscard]] glm::vec3 getUp() const;
 };
 
 #endif
