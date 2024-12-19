@@ -20,7 +20,7 @@ SkyBox::SkyBox() : Cube(default_vertex_buffer_data, default_color_buffer_data, d
     glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(skybox_uv_buffer_data.size()*sizeof(GLfloat)), skybox_uv_buffer_data.data(), GL_STATIC_DRAW);
 
     // Loading the texture
-    std::string texturePath = "../final_project/objects/skybox/sky.png";
+    std::string texturePath = "../final_project/objects/skybox/cubemap.png";
     std::cout << "Texture path: " << texturePath << std::endl;
     textureID = LoadTextureTileBox(texturePath.c_str());
 
