@@ -23,13 +23,9 @@ static GLFWwindow *window;
 static void key_callback(GLFWwindow *window, int key, int scancode, int action, int mode);
 static void mouse_callback(GLFWwindow* window, double xPos, double yPos);
 
-// Random preset
-std::random_device rd;  
-std::mt19937 gen(rd()); 
-
 // OpenGL camera view parameters
 float cameraSensitivity = 0.001f;
-auto camera = Camera(-3, -0.60, glm::vec3(-6, 40, 68), 0.001);
+auto camera = Camera(-3, -0.60, glm::vec3(-6, 40, 68), 0.001, 45, 0.1f, 1500.0f);
 
 int main()
 {
@@ -81,6 +77,7 @@ int main()
 	auto light2 = Light(glm::vec3(-57, 22, 31), 3000, glm::vec3(1), glm::vec3(0), 90, 5, 100);
 
 	auto skybox = SkyBox();
+	skybox.setScale(glm::vec3(1000));
 
 	auto zombie = GltfObject("../final_project/3d_assets/zombie/untitled.gltf", true);
 	zombie.setTranslation(glm::vec3(-17.6, -5.8, 16));
@@ -88,8 +85,7 @@ int main()
 	zombie.setRotation(90, glm::vec3(1,0, 0));
 
 	auto island = GltfObject("../final_project/3d_assets/island/untitled.gltf");
-	island.setRotation(-90, glm::vec3(1,0,0));
-	island.setScale(glm::vec3(1.0f));
+	island.setScale(glm::vec3(30));
 
 	std::vector<GraphicsObject *> objects = {&skybox, &island, &zombie};
 
@@ -105,6 +101,7 @@ int main()
 
 	do
 	{
+		skybox.setTranslation(camera.getPosition());
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// Update states for animation
