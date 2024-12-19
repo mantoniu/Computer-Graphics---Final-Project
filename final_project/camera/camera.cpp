@@ -5,11 +5,14 @@
 
 #include "iostream"
 
-Camera::Camera(const float viewAzimuth, const float viewPolar, const glm::vec3 eyeCenter, const float sensitivity){
+Camera::Camera(const float viewAzimuth, const float viewPolar, const glm::vec3 eyeCenter, const float sensitivity, const float FoV, const float zNear, const float zFar){
     this->eyeCenter = eyeCenter;
     this->viewAzimuth = viewAzimuth;
     this->viewPolar = viewPolar;
     this->sensitivity = sensitivity;
+    this->FoV = FoV;
+    this->zNear = zNear;
+    this->zFar = zFar;
 }
 
 glm::vec3 Camera::getLookAt() const {
@@ -30,6 +33,10 @@ glm::mat4 Camera::getProjectionMatrix() const {
 
 glm::mat4 Camera::getVPMatrix() const {
      return getProjectionMatrix() * getViewMatrix();
+}
+
+glm::vec3 Camera::getPosition() const {
+    return eyeCenter;
 }
 
 void Camera::onKeyPress(GLFWwindow *window) {
