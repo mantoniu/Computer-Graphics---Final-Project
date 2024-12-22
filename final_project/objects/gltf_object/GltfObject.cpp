@@ -446,8 +446,8 @@ GLuint GltfObject::initTextureArrays(std::vector<int> textureIndices) const {
 
 	        if (!stbir_resize_uint8(
 		        img.image.data(), img.width, img.height, 0,
-                resizedImage.data(), width, height, 0, 4)) {
-	            std::cerr << "Failed to resize texture" << std::endl;
+		        resizedImage.data(), width, height, 0, 4)) {
+		        std::cerr << "Failed to resize texture" << std::endl;
             }
 
             glTexSubImage3D(
@@ -499,9 +499,9 @@ void GltfObject::drawMesh(const std::vector<PrimitiveObject> &primitiveObjects,
 	for (size_t i = 0; i < mesh.primitives.size(); ++i) {
 		glBindVertexArray(primitiveObjects[i].vao);
 
-        const tinygltf::Primitive& primitive = mesh.primitives[i];
+		const tinygltf::Primitive &primitive = mesh.primitives[i];
 
-        const tinygltf::Accessor& indexAccessor = model.accessors[primitive.indices];
+		const tinygltf::Accessor& indexAccessor = model.accessors[primitive.indices];
 
 
         GLint metMaterialIDLocation = glGetUniformLocation(programID, "metTextureIndex");
@@ -521,12 +521,12 @@ void GltfObject::drawMesh(const std::vector<PrimitiveObject> &primitiveObjects,
 		materialIDLocation = glGetUniformLocation(programID, "baseColorFactor");
 		glUniform4fv(materialIDLocation, 1, value_ptr(materialsData[primitive.material].baseColorFactor));
 
-        glDrawElements(primitive.mode,
-                       static_cast<int>(indexAccessor.count),
-                       indexAccessor.componentType,
-                       BUFFER_OFFSET(indexAccessor.byteOffset));
+		glDrawElements(primitive.mode,
+		               static_cast<int>(indexAccessor.count),
+		               indexAccessor.componentType,
+		               BUFFER_OFFSET(indexAccessor.byteOffset));
 
-    	GLenum err;
+		GLenum err;
     	while ((err = glGetError()) != GL_NO_ERROR) {
     		std::cerr << "OpenGL error: " << err << std::endl;
     	}

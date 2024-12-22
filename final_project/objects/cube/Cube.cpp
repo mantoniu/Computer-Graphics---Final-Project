@@ -14,7 +14,8 @@
 Cube::Cube() : Cube(default_vertex_buffer_data, default_color_buffer_data, default_normal_buffer_data, default_index_buffer_data){
 }
 
-Cube::Cube(const std::vector<GLfloat> &vertex_buffer_data, const std::vector<GLfloat> &color_buffer_data, const std::vector<GLfloat> &normal_buffer_data, const std::vector<GLuint> &index_buffer_data){
+Cube::Cube(const std::vector<GLfloat> &vertex_buffer_data, const std::vector<GLfloat> &color_buffer_data,
+           const std::vector<GLfloat> &normal_buffer_data, const std::vector<GLuint> &index_buffer_data) {
     this->position = position;
     this->scale = scale;
 
