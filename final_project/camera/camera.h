@@ -4,8 +4,8 @@
 
 #ifndef CAMERA_H
 #define CAMERA_H
-
 #include <glm/glm.hpp>
+#include "glad/gl.h"
 #include "GLFW/glfw3.h"
 
 class Camera{
@@ -26,8 +26,6 @@ class Camera{
         float viewPolar;
 
         void updateEyeCenter();
-        [[nodiscard]] glm::mat4 getViewMatrix() const;
-        [[nodiscard]] glm::mat4 getProjectionMatrix() const;
 
     public:
         Camera(float viewAzimuth, float viewPolar, glm::vec3 eyeCenter, float sensitivity, float FoV, float zNear, float zFar);
@@ -40,6 +38,10 @@ class Camera{
         [[nodiscard]] glm::vec3 getLookAt() const;
         [[nodiscard]] glm::vec3 getUp() const;
         [[nodiscard]] glm::vec3 getPosition() const;
+
+        [[nodiscard]] glm::mat4 getViewMatrix() const;
+
+        [[nodiscard]] glm::mat4 getProjectionMatrix() const;
 };
 
 #endif

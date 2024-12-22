@@ -9,8 +9,6 @@
 #include <glm/detail/type_mat.hpp>
 #include <glm/detail/type_vec.hpp>
 #include <glm/detail/type_vec3.hpp>
-
-#include "glad/gl.h"
 #include "objects/graphics_object/GraphicsObject.h"
 
 // Default vertices
@@ -164,10 +162,10 @@ class Cube: public GraphicsObject{
         Cube();
         Cube(const std::vector<GLfloat> &vertex_buffer_data, const std::vector<GLfloat> &color_buffer_data, const std::vector<GLfloat> &normal_buffer_data, const std::vector<GLuint> &index_buffer_data);
 
-        void render(glm::mat4 &cameraMatrix) override;
+        void render(GLuint programID) override;
         void cleanup() override;
         virtual void disableVertexAttribArrays();
-        virtual void loadBuffers();
+        virtual void loadBuffers(GLuint programID);
 };
 
 

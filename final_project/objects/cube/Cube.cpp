@@ -3,6 +3,8 @@
 //
 
 #include "Cube.h"
+#include "Cube.h"
+#include "Cube.h"
 
 #include <iostream>
 #include <glm/gtc/matrix_transform.hpp>
@@ -12,7 +14,7 @@
 Cube::Cube() : Cube(default_vertex_buffer_data, default_color_buffer_data, default_normal_buffer_data, default_index_buffer_data){
 }
 
-Cube::Cube(const std::vector<GLfloat> &vertex_buffer_data, const std::vector<GLfloat> &color_buffer_data, const std::vector<GLfloat> &normal_buffer_data, const std::vector<GLuint> &index_buffer_data) : GraphicsObject("../final_project/shaders/skybox/box.vert","../final_project/shaders/skybox/box.frag"){
+Cube::Cube(const std::vector<GLfloat> &vertex_buffer_data, const std::vector<GLfloat> &color_buffer_data, const std::vector<GLfloat> &normal_buffer_data, const std::vector<GLuint> &index_buffer_data){
     this->position = position;
     this->scale = scale;
 
@@ -48,12 +50,12 @@ Cube::Cube(const std::vector<GLfloat> &vertex_buffer_data, const std::vector<GLf
     glBindVertexArray(0);
 }
 
-void Cube::render(glm::mat4 & cameraMatrix) {
-    GraphicsObject::render(cameraMatrix);
+void Cube::render(const GLuint programID) {
+    GraphicsObject::render(programID);
 
     glBindVertexArray(vaoID);
 
-    loadBuffers();
+    loadBuffers(programID);
 
     // Draw the box
     glDrawElements(
@@ -77,7 +79,7 @@ void Cube::disableVertexAttribArrays() {
     glDisableVertexAttribArray(2);
 }
 
-void Cube::loadBuffers() {
+void Cube::loadBuffers(GLuint programID) {
     glEnableVertexAttribArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, vertexBufferID);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);

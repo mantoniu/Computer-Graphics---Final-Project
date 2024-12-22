@@ -22,10 +22,28 @@ add_executable(final_project
     final_project/camera/camera.cpp
     final_project/Objects/Cube/Cube.cpp
     final_project/Objects/skybox/SkyBox.cpp
-    final_project/texture_utils/texture_utils.cpp
-    final_project/objects/gltf_object/GltfObject.cpp final_project/lighting/light/Light.cpp
+        final_project/utils/texture_utils.cpp
+        final_project/objects/gltf_object/GltfObject.cpp
+        final_project/light/Light.cpp
     final_project/tinygltf_implementation.cpp
-    final_project/objects/graphics_object/GraphicsObject.h final_project/objects/graphics_object/GraphicsObject.cpp final_project/lighting/lights_manager/LightsManager.cpp final_project/lighting/lights_manager/LightsManager.h
+        final_project/objects/graphics_object/GraphicsObject.h
+        final_project/objects/graphics_object/GraphicsObject.cpp
+        final_project/ssao/ssao.cpp
+        final_project/ssao/ssao.h
+        final_project/passes/geometry_pass/GeometryPass.cpp
+        final_project/passes/geometry_pass/GeometryPass.h
+        final_project/passes/render_pass/RenderPass.cpp
+        final_project/passes/render_pass/RenderPass.h
+        final_project/passes/ssao_pass/SSAOPass.cpp
+        final_project/passes/ssao_pass/SSAOPass.h
+        final_project/utils/renderQuad.cpp
+        final_project/utils/renderQuad.h
+        final_project/passes/ssao_blur_pass/SSAOBlurPass.cpp
+        final_project/passes/ssao_blur_pass/SSAOBlurPass.h
+        final_project/passes/lighting_pass/LightingPass.cpp
+        final_project/passes/lighting_pass/LightingPass.h
+        final_project/passes/depth_pass/DepthPass.cpp
+        final_project/passes/depth_pass/DepthPass.h
 )
 
 target_link_libraries(final_project

@@ -445,7 +445,7 @@ GLuint GltfObject::initTextureArrays(std::vector<int> textureIndices) const {
 	        std::vector<unsigned char> resizedImage(width * height * 4);
 
 	        if (!stbir_resize_uint8(
-                img.image.data(), img.width, img.height, 0,
+		        img.image.data(), img.width, img.height, 0,
                 resizedImage.data(), width, height, 0, 4)) {
 	            std::cerr << "Failed to resize texture" << std::endl;
             }
@@ -496,9 +496,8 @@ void GltfObject::loadMaterials() {
 
 void GltfObject::drawMesh(const std::vector<PrimitiveObject> &primitiveObjects,
                           const tinygltf::Model &model, const tinygltf::Mesh &mesh, GLuint programID) {
-	for (size_t i = 0; i < mesh.primitives.size(); ++i)
-    {
-        glBindVertexArray(primitiveObjects[i].vao);
+	for (size_t i = 0; i < mesh.primitives.size(); ++i) {
+		glBindVertexArray(primitiveObjects[i].vao);
 
         const tinygltf::Primitive& primitive = mesh.primitives[i];
 
@@ -506,19 +505,21 @@ void GltfObject::drawMesh(const std::vector<PrimitiveObject> &primitiveObjects,
 
 
         GLint metMaterialIDLocation = glGetUniformLocation(programID, "metTextureIndex");
-        glUniform1i(metMaterialIDLocation,
-                    (metallicRoughnessMaterialIndices.find(primitive.material) != metallicRoughnessMaterialIndices.end()) ? metallicRoughnessTexturesIndices[primitive.
-		                    material]
-	                    : -1);
+		glUniform1i(metMaterialIDLocation,
+		            (metallicRoughnessMaterialIndices.find(primitive.material) != metallicRoughnessMaterialIndices.
+		             end())
+			            ? metallicRoughnessTexturesIndices[primitive.
+				            material]
+			            : -1);
 
-        GLint materialIDLocation = glGetUniformLocation(programID, "colorTextureIndex");
-    	glUniform1i(materialIDLocation, (baseColorMaterialIndices.find(primitive.material) != baseColorMaterialIndices.
-	                                     end())
-		                                    ? baseColorMaterialIndices[primitive.material]
-		                                    : -1);
+		GLint materialIDLocation = glGetUniformLocation(programID, "colorTextureIndex");
+		glUniform1i(materialIDLocation, (baseColorMaterialIndices.find(primitive.material) != baseColorMaterialIndices.
+		                                 end())
+			                                ? baseColorMaterialIndices[primitive.material]
+			                                : -1);
 
-        materialIDLocation = glGetUniformLocation(programID, "baseColorFactor");
-    	glUniform4fv(materialIDLocation, 1, value_ptr(materialsData[primitive.material].baseColorFactor));
+		materialIDLocation = glGetUniformLocation(programID, "baseColorFactor");
+		glUniform4fv(materialIDLocation, 1, value_ptr(materialsData[primitive.material].baseColorFactor));
 
         glDrawElements(primitive.mode,
                        static_cast<int>(indexAccessor.count),
@@ -532,12 +533,12 @@ void GltfObject::drawMesh(const std::vector<PrimitiveObject> &primitiveObjects,
 
     	// Unbind to avoid contamination
         glBindTexture(GL_TEXTURE_2D, 0);
-        glBindVertexArray(0);
-    }
+		glBindVertexArray(0);
+	}
 }
 
 void GltfObject::drawModelNodes(const std::vector<PrimitiveObject>& primitiveObjects,
-					tinygltf::Model &model, const tinygltf::Node &node, GLuint programID) {
+                                tinygltf::Model &model, const tinygltf::Node &node, GLuint programID) {
 	// Draw the mesh at the node, and recursively do so for children nodes
 	if ((node.mesh >= 0) && (node.mesh < model.meshes.size())) {
 		drawMesh(primitiveObjects, model, model.meshes[node.mesh], programID);
@@ -567,8 +568,9 @@ void GltfObject::render(const GLuint programID) {
 
 	const GLuint jointMatricesID = glGetUniformLocation(programID, "jointMatrices");
 
-	for (const auto& skinObject: skinObjects)
-		glUniformMatrix4fv(static_cast<GLint>(jointMatricesID), static_cast<int>(skinObject.jointMatrices.size()), GL_FALSE, glm::value_ptr(skinObject
+	for (const auto&skinObject: skinObjects)
+		glUniformMatrix4fv(static_cast<GLint>(jointMatricesID), static_cast<int>(skinObject.jointMatrices.size()),
+		                   GL_FALSE, glm::value_ptr(skinObject
 			                   .jointMatrices[0]));
 
 	glUniform1i(glGetUniformLocation(programID, "ignoreLightingPass"), 0);
