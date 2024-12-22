@@ -90,8 +90,6 @@ int main()
 	std::vector<GraphicsObject *> objects = {&skybox, &zombie, &island};
 	std::vector lights = {light, light2};
 
-	//auto lightsManager = LightsManager(std::vector{light, light2}, objects);
-
 	// Passes
 	auto geometryPass = GeometryPass(WIDTH, HEIGHT);
 	auto ssaoPass = SSAOPass(WIDTH, HEIGHT, geometryPass);
