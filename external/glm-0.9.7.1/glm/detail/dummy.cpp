@@ -156,7 +156,7 @@ struct intersection
 #include <glm/geometric.hpp>// glm::normalize, glm::dot, glm::reflect
 #include <glm/exponential.hpp>// glm::pow
 #include <glm/gtc/random.hpp>// glm::vecRand3
-glm::vec3 lighting
+glm::vec3 lighting.frag
 (
 	intersection const & Intersection,
 	material const & Material,

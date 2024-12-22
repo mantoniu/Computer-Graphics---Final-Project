@@ -129,10 +129,10 @@ static void drawScene(void)
     glRotatef((GLfloat) rot_y * 0.5f, 0.0f, 1.0f, 0.0f);
     glRotatef((GLfloat) rot_z * 0.5f, 0.0f, 0.0f, 1.0f);
 
-    // Set graphics_object color (used for orthogonal views, lighting disabled)
+    // Set graphics_object color (used for orthogonal views, lighting.frag disabled)
     glColor4fv(model_diffuse);
 
-    // Set graphics_object material (used for perspective view, lighting enabled)
+    // Set graphics_object material (used for perspective view, lighting.frag enabled)
     glMaterialfv(GL_FRONT, GL_DIFFUSE, model_diffuse);
     glMaterialfv(GL_FRONT, GL_SPECULAR, model_specular);
     glMaterialf(GL_FRONT, GL_SHININESS, model_shininess);
@@ -338,7 +338,7 @@ static void drawAllViews(void)
     // Draw scene
     drawScene();
 
-    // Disable lighting
+    // Disable lighting.frag
     glDisable(GL_LIGHTING);
 
     // Disable face culling

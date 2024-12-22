@@ -197,10 +197,10 @@ static PARTICLE particles[MAX_PARTICLES];
 // Global variable holding the age of the youngest particle
 static float min_age;
 
-// Color of latest born particle (used for fountain lighting)
+// Color of latest born particle (used for fountain lighting.frag)
 static float glow_color[4];
 
-// Position of latest born particle (used for fountain lighting)
+// Position of latest born particle (used for fountain lighting.frag)
 static float glow_pos[4];
 
 
@@ -267,7 +267,7 @@ static void init_particle(PARTICLE *p, double t)
     p->g = 0.6f + 0.4f * (float) sin(0.63 * t + 1.1);
     p->b = 0.6f + 0.4f * (float) sin(0.91 * t + 2.1);
 
-    // Store settings for fountain glow lighting
+    // Store settings for fountain glow lighting.frag
     glow_pos[0] = 0.4f * (float) sin(1.34 * t);
     glow_pos[1] = 0.4f * (float) sin(3.11 * t);
     glow_pos[2] = FOUNTAIN_HEIGHT + 1.f;
@@ -718,7 +718,7 @@ static void draw_floor(void)
         glMaterialf(GL_FRONT, GL_SHININESS, floor_shininess);
 
         // Draw floor as a bunch of triangle strips (high tesselation
-        // improves lighting)
+        // improves lighting.frag)
         glNormal3f(0.f, 0.f, 1.f);
         glBegin(GL_QUADS);
         tessellate_floor(-1.f, -1.f, 0.f, 0.f, 0);
