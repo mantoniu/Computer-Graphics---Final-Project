@@ -1,6 +1,5 @@
 #include <glad/gl.h>
 #include <GLFW/glfw3.h>
-#include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 #define USE_MATH_DEFINES
 #include <iomanip>
