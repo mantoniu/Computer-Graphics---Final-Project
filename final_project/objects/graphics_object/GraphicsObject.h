@@ -29,6 +29,7 @@ class GraphicsObject {
         void setScale(glm::vec3 scale);
 
         virtual void render(GLuint programID) = 0;
+
         virtual void cleanup();
 };
 

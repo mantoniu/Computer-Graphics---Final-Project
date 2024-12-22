@@ -18,7 +18,7 @@
 
 GltfObject::GltfObject(const std::string& filePath) : GltfObject(filePath, false){}
 
-GltfObject::GltfObject(const std::string& filePath, bool animated) : GraphicsObject(){
+GltfObject::GltfObject(const std::string &filePath, bool animated) : GraphicsObject() {
 	// Modify your path if needed
 	if (!loadModel(model, filePath.c_str())) {
 		return;
@@ -437,14 +437,14 @@ GLuint GltfObject::initTextureArrays(std::vector<int> textureIndices) const {
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-	std::cout << "Loading textures..." << std::endl;
+    std::cout << "Loading textures..." << std::endl;
     for (int i = 0; i < layerCount; i++) {
         const auto img = model.images[model.textures[textureIndices[i]].source];
 
         if (img.width != width || img.height != height) {
-            std::vector<unsigned char> resizedImage(width * height * 4);
+	        std::vector<unsigned char> resizedImage(width * height * 4);
 
-            if (!stbir_resize_uint8(
+	        if (!stbir_resize_uint8(
                 img.image.data(), img.width, img.height, 0,
                 resizedImage.data(), width, height, 0, 4)) {
 	            std::cerr << "Failed to resize texture" << std::endl;
@@ -495,8 +495,8 @@ void GltfObject::loadMaterials() {
 }
 
 void GltfObject::drawMesh(const std::vector<PrimitiveObject> &primitiveObjects,
-                           const tinygltf::Model &model, const tinygltf::Mesh &mesh, GLuint programID) {
-    for (size_t i = 0; i < mesh.primitives.size(); ++i)
+                          const tinygltf::Model &model, const tinygltf::Mesh &mesh, GLuint programID) {
+	for (size_t i = 0; i < mesh.primitives.size(); ++i)
     {
         glBindVertexArray(primitiveObjects[i].vao);
 
@@ -505,14 +505,19 @@ void GltfObject::drawMesh(const std::vector<PrimitiveObject> &primitiveObjects,
         const tinygltf::Accessor& indexAccessor = model.accessors[primitive.indices];
 
 
-    	GLint metMaterialIDLocation = glGetUniformLocation(programID, "metTextureIndex");
-    	glUniform1i(metMaterialIDLocation,
-			(metallicRoughnessMaterialIndices.find(primitive.material) != metallicRoughnessMaterialIndices.end()) ? metallicRoughnessTexturesIndices[primitive.material] : -1);
+        GLint metMaterialIDLocation = glGetUniformLocation(programID, "metTextureIndex");
+        glUniform1i(metMaterialIDLocation,
+                    (metallicRoughnessMaterialIndices.find(primitive.material) != metallicRoughnessMaterialIndices.end()) ? metallicRoughnessTexturesIndices[primitive.
+		                    material]
+	                    : -1);
 
-    	GLint materialIDLocation = glGetUniformLocation(programID, "colorTextureIndex");
-    	glUniform1i(materialIDLocation, (baseColorMaterialIndices.find(primitive.material) != baseColorMaterialIndices.end()) ? baseColorMaterialIndices[primitive.material] : -1);
+        GLint materialIDLocation = glGetUniformLocation(programID, "colorTextureIndex");
+    	glUniform1i(materialIDLocation, (baseColorMaterialIndices.find(primitive.material) != baseColorMaterialIndices.
+	                                     end())
+		                                    ? baseColorMaterialIndices[primitive.material]
+		                                    : -1);
 
-    	materialIDLocation = glGetUniformLocation(programID, "baseColorFactor");
+        materialIDLocation = glGetUniformLocation(programID, "baseColorFactor");
     	glUniform4fv(materialIDLocation, 1, value_ptr(materialsData[primitive.material].baseColorFactor));
 
         glDrawElements(primitive.mode,
@@ -526,8 +531,8 @@ void GltfObject::drawMesh(const std::vector<PrimitiveObject> &primitiveObjects,
     	}
 
     	// Unbind to avoid contamination
-    	glBindTexture(GL_TEXTURE_2D, 0);
-    	glBindVertexArray(0);
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glBindVertexArray(0);
     }
 }
 
@@ -537,7 +542,7 @@ void GltfObject::drawModelNodes(const std::vector<PrimitiveObject>& primitiveObj
 	if ((node.mesh >= 0) && (node.mesh < model.meshes.size())) {
 		drawMesh(primitiveObjects, model, model.meshes[node.mesh], programID);
 	}
-	for (const int i : node.children) {
+	for (const int i: node.children) {
 		drawModelNodes(primitiveObjects, model, model.nodes[i], programID);
 	}
 }
@@ -552,7 +557,7 @@ void GltfObject::drawModel(const std::vector<PrimitiveObject>& primitiveObjects,
 		return;
 	}
 
-	for (int node : scene.nodes) {
+	for (int node: scene.nodes) {
 		drawModelNodes(primitiveObjects, model, model.nodes[node], programID);
 	}
 }
@@ -562,8 +567,9 @@ void GltfObject::render(const GLuint programID) {
 
 	const GLuint jointMatricesID = glGetUniformLocation(programID, "jointMatrices");
 
-	for (const auto& skinObject : skinObjects)
-		glUniformMatrix4fv(static_cast<GLint>(jointMatricesID), static_cast<int>(skinObject.jointMatrices.size()), GL_FALSE, glm::value_ptr(skinObject.jointMatrices[0]));
+	for (const auto& skinObject: skinObjects)
+		glUniformMatrix4fv(static_cast<GLint>(jointMatricesID), static_cast<int>(skinObject.jointMatrices.size()), GL_FALSE, glm::value_ptr(skinObject
+			                   .jointMatrices[0]));
 
 	glUniform1i(glGetUniformLocation(programID, "ignoreLightingPass"), 0);
 

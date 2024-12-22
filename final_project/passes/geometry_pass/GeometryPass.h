@@ -15,19 +15,26 @@ class GeometryPass : public RenderPass {
     GLuint gIgnoreLightingPass = 0;
     GLuint rboDepth = 0;
 
-    public:
-        GeometryPass(int width, int height);
+public:
+    GeometryPass(int width, int height);
 
-        void setup() override;
-        void render(const std::vector<GraphicsObject*>& objects, const Camera& camera) override;
-        void cleanup() override;
+    void setup() override;
 
-        [[nodiscard]] GLuint getGPosition() const;
-        [[nodiscard]] GLuint getGPositionWorld() const;
-        [[nodiscard]] GLuint getGNormal() const;
-        [[nodiscard]] GLuint getGAlbedo() const;
-        [[nodiscard]] GLuint getGIgnoreLightingPass() const;
-        [[nodiscard]] GLuint getRboDepth() const;
+    void render(const std::vector<GraphicsObject *> &objects, const Camera &camera) override;
+
+    void cleanup() override;
+
+    [[nodiscard]] GLuint getGPosition() const;
+
+    [[nodiscard]] GLuint getGPositionWorld() const;
+
+    [[nodiscard]] GLuint getGNormal() const;
+
+    [[nodiscard]] GLuint getGAlbedo() const;
+
+    [[nodiscard]] GLuint getGIgnoreLightingPass() const;
+
+    [[nodiscard]] GLuint getRboDepth() const;
 };
 
 

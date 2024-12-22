@@ -9,7 +9,7 @@
 #include "passes/ssao_blur_pass/SSAOBlurPass.h"
 
 
-class LightingPass : public RenderPass{
+class LightingPass : public RenderPass {
     GLuint lightsUBO = 0;
 
     GeometryPass &geometryPass;
@@ -19,14 +19,16 @@ class LightingPass : public RenderPass{
 
     void loadLightsUBOs();
 
-    public:
-        LightingPass(int width, int height, std::vector<Light> &lights, GeometryPass &geometryPass, SSAOBlurPass &ssaoBlurPass, DepthPass &depthPass);
+public:
+    LightingPass(int width, int height, std::vector<Light> &lights, GeometryPass &geometryPass,
+                 SSAOBlurPass &ssaoBlurPass, DepthPass &depthPass);
 
-        void setup() override;
-        void render(const std::vector<GraphicsObject*>& objects, const Camera& camera) override;
-        void cleanup() override;
+    void setup() override;
+
+    void render(const std::vector<GraphicsObject *> &objects, const Camera &camera) override;
+
+    void cleanup() override;
 };
-
 
 
 #endif //LIGHTINGPASS_H

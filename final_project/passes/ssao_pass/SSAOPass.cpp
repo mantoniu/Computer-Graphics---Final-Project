@@ -10,16 +10,16 @@
 #include "utils/renderQuad.h"
 
 SSAOPass::SSAOPass(const int width, const int height, GeometryPass &geometryPass) : RenderPass(width, height,
-                                                                                                     LoadShadersFromFile("../final_project/shaders/ssao.vert", "../final_project/shaders/ssao.frag")),
-                                                                                          geometryPass(geometryPass) {
+        LoadShadersFromFile("../final_project/shaders/ssao.vert", "../final_project/shaders/ssao.frag")),
+    geometryPass(geometryPass) {
     generateSampleKernel();
     generateNoiseTexture();
 }
 
 void SSAOPass::generateSampleKernel() {
-    for (unsigned int i = 0; i < 64; ++i)
-    {
-        glm::vec3 sample(randomFloats(generator) * 2.0 - 1.0, randomFloats(generator) * 2.0 - 1.0, randomFloats(generator));
+    for (unsigned int i = 0; i < 64; ++i) {
+        glm::vec3 sample(randomFloats(generator) * 2.0 - 1.0, randomFloats(generator) * 2.0 - 1.0,
+                         randomFloats(generator));
         sample = normalize(sample);
         sample *= randomFloats(generator);
         float scale = static_cast<float>(i) / 64.0f;
@@ -31,9 +31,9 @@ void SSAOPass::generateSampleKernel() {
 }
 
 void SSAOPass::generateNoiseTexture() {
-    for (unsigned int i = 0; i < 16; i++)
-    {
-        glm::vec3 noise(randomFloats(generator) * 2.0 - 1.0, randomFloats(generator) * 2.0 - 1.0, 0.0f); // rotate around z-axis (in tangent space)
+    for (unsigned int i = 0; i < 16; i++) {
+        glm::vec3 noise(randomFloats(generator) * 2.0 - 1.0, randomFloats(generator) * 2.0 - 1.0, 0.0f);
+        // rotate around z-axis (in tangent space)
         ssaoNoise.push_back(noise);
     }
 }
@@ -77,7 +77,8 @@ void SSAOPass::render(const std::vector<GraphicsObject *> &objects, const Camera
 
     // Send kernel + rotation
     for (unsigned int i = 0; i < 64; ++i)
-        glUniform3fv(glGetUniformLocation(getShaderID(), ("samples[" + std::to_string(i) + "]").c_str()), 1, &ssaoKernel[i][0]);
+        glUniform3fv(glGetUniformLocation(getShaderID(), ("samples[" + std::to_string(i) + "]").c_str()), 1,
+                     &ssaoKernel[i][0]);
 
     glm::mat4 projection = camera.getProjectionMatrix();
     glUniformMatrix4fv(glGetUniformLocation(getShaderID(), "projection"), 1, GL_FALSE, &projection[0][0]);
@@ -103,7 +104,7 @@ void SSAOPass::cleanup() {
 }
 
 GLuint SSAOPass::getColorBuffer() const {
-    return  ssaoColorBuffer;
+    return ssaoColorBuffer;
 }
 
 

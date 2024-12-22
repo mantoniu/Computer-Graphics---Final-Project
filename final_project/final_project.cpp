@@ -62,8 +62,7 @@ int main()
 	glfwSetCursorPosCallback(window, mouse_callback);
 
 	// Load OpenGL functions, gladLoadGL returns the loaded version, 0 on error.
-	if (int version = gladLoadGL(glfwGetProcAddress); version == 0)
-	{
+	if (int version = gladLoadGL(glfwGetProcAddress); version == 0) {
 		std::cerr << "Failed to initialize OpenGL context." << std::endl;
 		return -1;
 	}
@@ -90,7 +89,7 @@ int main()
 	island.setScale(glm::vec3(30));
 
 	std::vector<GraphicsObject *> objects = {&skybox, &zombie, &island};
-	std:: vector lights = {light, light2};
+	std::vector lights = {light, light2};
 
 	//auto lightsManager = LightsManager(std::vector{light, light2}, objects);
 
@@ -110,7 +109,7 @@ int main()
 	unsigned long frames = 0;
 	static float playbackSpeed = 2.0f;
 
-	for (const auto &pass : passes)
+	for (const auto &pass: passes)
 		pass->setup();
 
 	do
@@ -119,7 +118,7 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
-		for (const auto &pass : passes)
+		for (const auto &pass: passes)
 			pass->render(objects, camera);
 
 		// Update states for animation
@@ -151,10 +150,10 @@ int main()
 	while (!glfwWindowShouldClose(window));
 
 	// Clean up
-	for (const auto &object : objects)
+	for (const auto &object: objects)
 		object->cleanup();
 
-	for (const auto &pass : passes)
+	for (const auto &pass: passes)
 		pass->cleanup();
 
 	// Close OpenGL window and terminate GLFW

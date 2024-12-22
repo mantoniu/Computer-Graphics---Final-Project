@@ -9,7 +9,11 @@
 
 #include "utils/renderQuad.h"
 
-SSAOBlurPass::SSAOBlurPass(int width, int height, SSAOPass &ssaoPass) : RenderPass(width, height, LoadShadersFromFile("../final_project/shaders/ssao.vert", "../final_project/shaders/ssao_blur.frag")), ssaoPass(ssaoPass){
+SSAOBlurPass::SSAOBlurPass(int width, int height, SSAOPass &ssaoPass) : RenderPass(width, height,
+                                                                            LoadShadersFromFile(
+                                                                                "../final_project/shaders/ssao.vert",
+                                                                                "../final_project/shaders/ssao_blur.frag")),
+                                                                        ssaoPass(ssaoPass) {
 }
 
 
@@ -42,7 +46,7 @@ void SSAOBlurPass::render(const std::vector<GraphicsObject *> &objects, const Ca
 }
 
 void SSAOBlurPass::cleanup() {
-    if (ssaoColorBufferBlur!= 0) {
+    if (ssaoColorBufferBlur != 0) {
         glDeleteTextures(1, &ssaoColorBufferBlur);
         ssaoColorBufferBlur = 0;
     }

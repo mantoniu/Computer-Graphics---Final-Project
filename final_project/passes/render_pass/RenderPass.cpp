@@ -4,7 +4,8 @@
 
 #include "RenderPass.h"
 
-RenderPass::RenderPass(const int width, const int height, const GLuint shader) : shaderID(shader), width(width), height(height) {
+RenderPass::RenderPass(const int width, const int height, const GLuint shader) : shaderID(shader), width(width),
+    height(height) {
     glGenFramebuffers(1, &FBO);
 }
 

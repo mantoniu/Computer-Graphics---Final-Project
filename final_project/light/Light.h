@@ -30,7 +30,7 @@ class Light {
 
         [[nodiscard]] glm::vec3 getPosition() const;
         [[nodiscard]] float getIntensity() const;
-        [[nodiscard]] glm::vec3 getLightColor() const;
+        [[nodiscard]] glm::vec3 getColor() const;
         [[nodiscard]] glm::vec3 getLookAt() const;
         [[nodiscard]] glm::mat4 getSpaceMatrix() const;
 

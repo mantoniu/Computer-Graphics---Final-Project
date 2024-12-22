@@ -118,6 +118,7 @@ class GltfObject : public GraphicsObject{
 		void preloadTextures();
 
 		[[nodiscard]] GLuint loadTexture(int textureIndex) const;
+
 		void loadMaterials();
 
 		void initBuffers();
@@ -131,8 +132,10 @@ class GltfObject : public GraphicsObject{
 		void drawMesh(const std::vector<PrimitiveObject> &primitiveObjects, const tinygltf::Model &model,
 		              const tinygltf::Mesh &mesh, GLuint programID);
 
-		void drawModelNodes(const std::vector<PrimitiveObject> &primitiveObjects, tinygltf::Model &model, const tinygltf::Node &node, GLuint
+		void drawModelNodes(const std::vector<PrimitiveObject> &primitiveObjects, tinygltf::Model &model,
+		                    const tinygltf::Node &node, GLuint
 		                    programID);
+
 		void drawModel(const std::vector<PrimitiveObject> &primitiveObjects, tinygltf::Model &model, GLuint programID);
 
 		void render(GLuint programID) override;

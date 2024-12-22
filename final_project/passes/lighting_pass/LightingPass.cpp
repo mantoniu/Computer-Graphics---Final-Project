@@ -8,7 +8,14 @@
 
 #include "utils/renderQuad.h"
 
-LightingPass::LightingPass(const int width, const int height, std::vector<Light> &lights, GeometryPass &geometryPass, SSAOBlurPass &ssaoBlurPass, DepthPass &depthPass) : RenderPass(width, height, LoadShadersFromFile("../final_project/shaders/ssao.vert", "../final_project/shaders/lighting.frag")), geometryPass(geometryPass), ssaoBlurPass(ssaoBlurPass), depthPass(depthPass), lights(lights){
+LightingPass::LightingPass(const int width, const int height, std::vector<Light> &lights, GeometryPass &geometryPass,
+                           SSAOBlurPass &ssaoBlurPass, DepthPass &depthPass) : RenderPass(width, height,
+                                                                                   LoadShadersFromFile(
+                                                                                       "../final_project/shaders/ssao.vert",
+                                                                                       "../final_project/shaders/lighting.frag")),
+                                                                               geometryPass(geometryPass),
+                                                                               ssaoBlurPass(ssaoBlurPass),
+                                                                               depthPass(depthPass), lights(lights) {
 }
 
 void LightingPass::setup() {
@@ -24,7 +31,7 @@ void LightingPass::setup() {
 
 void LightingPass::loadLightsUBOs() {
     // Define the size of the UBO: two glm::vec3 (position + intensity) per light
-    const size_t uboSize = sizeof(lightStruct)*lights.size();
+    const size_t uboSize = sizeof(lightStruct) * lights.size();
 
     // Generate and bind the UBO
     glGenBuffers(1, &lightsUBO);
@@ -33,7 +40,7 @@ void LightingPass::loadLightsUBOs() {
 
     // Load light data into the UBO
     lightStruct uboData[lights.size()];
-    for (int i=0; i<lights.size(); i++){
+    for (int i = 0; i < lights.size(); i++) {
         uboData[i] = lights[i].toStruct();
     }
 

@@ -24,7 +24,7 @@ glm::vec3 Light::getPosition() const {
     return lightPosition;
 }
 
-glm::vec3 Light::getLightColor() const {
+glm::vec3 Light::getColor() const {
     return lightColor;
 }
 
@@ -47,7 +47,7 @@ float Light::getFov() const {
 glm::mat4 Light::getSpaceMatrix() const {
     const glm::mat4 lightProjectionMatrix = glm::perspective(glm::radians(getFov()), 1.0f, getDepthNear(), getDepthFar());
 
-    const glm::mat4 lightViewMatrix = glm::lookAt(getPosition(), getLookAt(), glm::vec3(0, 0, 1));
+    const glm::mat4 lightViewMatrix = glm::lookAt(getPosition(), getLookAt(), glm::vec3(0, 1, 0));
     return lightProjectionMatrix * lightViewMatrix;
 }
 
@@ -55,7 +55,7 @@ lightStruct Light::toStruct() const {
     lightStruct lStruct;
     lStruct.position = getPosition();
     lStruct.intensity = getIntensity();
-    lStruct.color = getLightColor();
+    lStruct.color = getColor();
     lStruct.spaceMatrix = getSpaceMatrix();
     return lStruct;
 }
