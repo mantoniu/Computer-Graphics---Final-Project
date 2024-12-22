@@ -6,12 +6,9 @@
 #define GLTFOBJECT_H
 #include <glm/detail/type_mat.hpp>
 #include <glm/detail/type_vec.hpp>
-
 #include "glad/gl.h"
-#include "lighting/light/Light.h"
+#include "light/Light.h"
 #include <tiny_gltf.h>
-
-#include "lighting/lights_manager/LightsManager.h"
 #include "objects/graphics_object/GraphicsObject.h"
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
 
@@ -60,10 +57,6 @@ struct AnimationObject {
 
 class GltfObject : public GraphicsObject{
 	private:
-		// Shader variable IDs
-		GLuint mvpMatrixID;
-		GLuint jointMatricesID;
-
 		int animated;
 
 		tinygltf::Model model;
@@ -86,13 +79,13 @@ class GltfObject : public GraphicsObject{
 		std::map<int, Material> materialsData;
 
 		// Textures arrays
-		GLuint colorTexturesID;
-		GLuint normalTexturesID;
-		GLuint emissiveTexturesID;
-		GLuint occlusionTexturesID;
-		GLuint metallicRoughnessTextureID;
+		GLuint colorTexturesID = 0;
+		GLuint normalTexturesID = 0;
+		GLuint emissiveTexturesID = 0;
+		GLuint occlusionTexturesID = 0;
+		GLuint metallicRoughnessTextureID = 0;
 
-		GLuint uboMaterials;
+		GLuint uboMaterials = 0;
 
 	public:
 		explicit GltfObject(const std::string& filePath);
@@ -118,13 +111,13 @@ class GltfObject : public GraphicsObject{
 		void bindModelNodes(std::vector<PrimitiveObject> &primitiveObjects, tinygltf::Model &model, tinygltf::Node &node);
 		std::vector<PrimitiveObject> bindModel(tinygltf::Model &model);
 
-		GLuint initTextureArrays(std::vector<int> textureIndices) const;
+		[[nodiscard]] GLuint initTextureArrays(std::vector<int> textureIndices) const;
 
 		void loadAndResizeTexture(int textureIndex, int width, int height);
 
 		void preloadTextures();
 
-		GLuint loadTexture(int textureIndex) const;
+		[[nodiscard]] GLuint loadTexture(int textureIndex) const;
 		void loadMaterials();
 
 		void initBuffers();
@@ -136,12 +129,13 @@ class GltfObject : public GraphicsObject{
 		void bindTextures();
 
 		void drawMesh(const std::vector<PrimitiveObject> &primitiveObjects, const tinygltf::Model &model,
-		              const tinygltf::Mesh &mesh);
+		              const tinygltf::Mesh &mesh, GLuint programID);
 
-		void drawModelNodes(const std::vector<PrimitiveObject>& primitiveObjects, tinygltf::Model &model, const tinygltf::Node &node);
-		void drawModel(const std::vector<PrimitiveObject>& primitiveObjects, tinygltf::Model &model);
+		void drawModelNodes(const std::vector<PrimitiveObject> &primitiveObjects, tinygltf::Model &model, const tinygltf::Node &node, GLuint
+		                    programID);
+		void drawModel(const std::vector<PrimitiveObject> &primitiveObjects, tinygltf::Model &model, GLuint programID);
 
-		void render(glm::mat4 & cameraMatrix) override;
+		void render(GLuint programID) override;
 };
 
 #endif //GLTFOBJECT_H

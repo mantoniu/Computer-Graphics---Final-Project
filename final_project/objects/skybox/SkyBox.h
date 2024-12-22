@@ -72,7 +72,7 @@ class SkyBox : public Cube{
     public:
         SkyBox();
         void disableVertexAttribArrays() override;
-        void loadBuffers() override;
+        void loadBuffers(GLuint programID) override;
         void cleanup() override;
 };
 

@@ -13,12 +13,12 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <objects/cube/Cube.h>
 #include <render/shader.h>
-#include <texture_utils/texture_utils.h>
-#include "lighting/light/Light.h"
+#include <utils/texture_utils.h>
+#include "light/Light.h"
 
 GltfObject::GltfObject(const std::string& filePath) : GltfObject(filePath, false){}
 
-GltfObject::GltfObject(const std::string& filePath, bool animated) : GraphicsObject("../final_project/shaders/bot/gltf.vert", "../final_project/shaders/bot/gltf.frag"){
+GltfObject::GltfObject(const std::string& filePath, bool animated) : GraphicsObject(){
 	// Modify your path if needed
 	if (!loadModel(model, filePath.c_str())) {
 		return;
@@ -48,8 +48,6 @@ GltfObject::GltfObject(const std::string& filePath, bool animated) : GraphicsObj
 	{
 		std::cerr << "Failed to load metallic roughness textures." << std::endl;
 	}
-
-	jointMatricesID = glGetUniformLocation(getProgramId(), "jointMatrices");
 }
 
 
@@ -326,18 +324,11 @@ bool GltfObject::loadModel(tinygltf::Model &model, const char *filename) {
         return false;
     }
     std::cout << "Loaded glTF: " << filename << std::endl;
-
-    // Log details about images and textures
-    std::cout << "Number of images: " << model.images.size() << std::endl;
-    std::cout << "Number of textures: " << model.textures.size() << std::endl;
-    std::cout << "Number of materials: " << model.materials.size() << std::endl;
-
     return res;
 }
 
 void GltfObject::bindMesh(std::vector<PrimitiveObject>& primitiveObjects, const tinygltf::Model& model, tinygltf::Mesh& mesh) {
     for (const auto& primitive : mesh.primitives) {
-        // Vérifiez que les indices sont valides
         if (primitive.indices < 0) {
             std::cerr << "Invalid indices for primitive" << std::endl;
             continue;
@@ -347,9 +338,6 @@ void GltfObject::bindMesh(std::vector<PrimitiveObject>& primitiveObjects, const 
         glGenVertexArrays(1, &primitiveObject.vao);
         glBindVertexArray(primitiveObject.vao);
 
-    	std::cout << "VAO ID: " << primitiveObject.vao << std::endl;
-
-        // Gestion des indices
         const tinygltf::Accessor& indexAccessor = model.accessors[primitive.indices];
         const tinygltf::BufferView& indexBufferView = model.bufferViews[indexAccessor.bufferView];
         const tinygltf::Buffer& indexBuffer = model.buffers[indexBufferView.buffer];
@@ -364,12 +352,6 @@ void GltfObject::bindMesh(std::vector<PrimitiveObject>& primitiveObjects, const 
 
         primitiveObject.vbos[GL_ELEMENT_ARRAY_BUFFER] = indexBufferID;
 
-        // Debug print
-    	std::cout << "Index buffer ID: " << indexBufferID
-				  << ", Byte length: " << indexBufferView.byteLength << std::endl;
-
-
-        // Gestion des attributs de vertex
         for (const auto& attrib : primitive.attributes) {
             int vaa = -1;
             if (attrib.first == "POSITION") vaa = 0;
@@ -444,29 +426,23 @@ GLuint GltfObject::initTextureArrays(std::vector<int> textureIndices) const {
     glGenTextures(1, &textureArrayID);
     glBindTexture(GL_TEXTURE_2D_ARRAY, textureArrayID);
 
-    // Dimensions uniformes pour toutes les textures
     int width = 1024;
     int height = 1024;
     int layerCount = textureIndices.size();
 
-    // Allouer de la mémoire pour le tableau de textures
     glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGBA, width, height, layerCount, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 
-    // Paramètres de texture
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
+	std::cout << "Loading textures..." << std::endl;
     for (int i = 0; i < layerCount; i++) {
         const auto img = model.images[model.textures[textureIndices[i]].source];
 
         if (img.width != width || img.height != height) {
-            std::cerr << "Resizing texture layer " << i << " from "
-                      << img.width << "x" << img.height << " to "
-                      << width << "x" << height << std::endl;
-
-            std::vector<unsigned char> resizedImage(width * height * 4); // 4 canaux pour RGBA
+            std::vector<unsigned char> resizedImage(width * height * 4);
 
             if (!stbir_resize_uint8(
                 img.image.data(), img.width, img.height, 0,
@@ -487,8 +463,6 @@ GLuint GltfObject::initTextureArrays(std::vector<int> textureIndices) const {
     return textureArrayID;
 }
 
-
-// TODO Set default colors
 void GltfObject::loadMaterials() {
     for (int i=0; i<model.materials.size(); i++) {
     	const auto material = model.materials[i];
@@ -521,7 +495,7 @@ void GltfObject::loadMaterials() {
 }
 
 void GltfObject::drawMesh(const std::vector<PrimitiveObject> &primitiveObjects,
-                           const tinygltf::Model &model, const tinygltf::Mesh &mesh) {
+                           const tinygltf::Model &model, const tinygltf::Mesh &mesh, GLuint programID) {
     for (size_t i = 0; i < mesh.primitives.size(); ++i)
     {
         glBindVertexArray(primitiveObjects[i].vao);
@@ -531,20 +505,25 @@ void GltfObject::drawMesh(const std::vector<PrimitiveObject> &primitiveObjects,
         const tinygltf::Accessor& indexAccessor = model.accessors[primitive.indices];
 
 
-    	GLint metMaterialIDLocation = glGetUniformLocation(getProgramId(), "metTextureIndex");
+    	GLint metMaterialIDLocation = glGetUniformLocation(programID, "metTextureIndex");
     	glUniform1i(metMaterialIDLocation,
 			(metallicRoughnessMaterialIndices.find(primitive.material) != metallicRoughnessMaterialIndices.end()) ? metallicRoughnessTexturesIndices[primitive.material] : -1);
 
-    	GLint materialIDLocation = glGetUniformLocation(getProgramId(), "colorTextureIndex");
+    	GLint materialIDLocation = glGetUniformLocation(programID, "colorTextureIndex");
     	glUniform1i(materialIDLocation, (baseColorMaterialIndices.find(primitive.material) != baseColorMaterialIndices.end()) ? baseColorMaterialIndices[primitive.material] : -1);
 
-    	materialIDLocation = glGetUniformLocation(getProgramId(), "baseColorFactor");
+    	materialIDLocation = glGetUniformLocation(programID, "baseColorFactor");
     	glUniform4fv(materialIDLocation, 1, value_ptr(materialsData[primitive.material].baseColorFactor));
 
         glDrawElements(primitive.mode,
                        static_cast<int>(indexAccessor.count),
                        indexAccessor.componentType,
                        BUFFER_OFFSET(indexAccessor.byteOffset));
+
+    	GLenum err;
+    	while ((err = glGetError()) != GL_NO_ERROR) {
+    		std::cerr << "OpenGL error: " << err << std::endl;
+    	}
 
     	// Unbind to avoid contamination
     	glBindTexture(GL_TEXTURE_2D, 0);
@@ -553,18 +532,18 @@ void GltfObject::drawMesh(const std::vector<PrimitiveObject> &primitiveObjects,
 }
 
 void GltfObject::drawModelNodes(const std::vector<PrimitiveObject>& primitiveObjects,
-					tinygltf::Model &model, const tinygltf::Node &node) {
+					tinygltf::Model &model, const tinygltf::Node &node, GLuint programID) {
 	// Draw the mesh at the node, and recursively do so for children nodes
 	if ((node.mesh >= 0) && (node.mesh < model.meshes.size())) {
-		drawMesh(primitiveObjects, model, model.meshes[node.mesh]);
+		drawMesh(primitiveObjects, model, model.meshes[node.mesh], programID);
 	}
 	for (const int i : node.children) {
-		drawModelNodes(primitiveObjects, model, model.nodes[i]);
+		drawModelNodes(primitiveObjects, model, model.nodes[i], programID);
 	}
 }
 
 void GltfObject::drawModel(const std::vector<PrimitiveObject>& primitiveObjects,
-			tinygltf::Model &model) {
+			tinygltf::Model &model, GLuint programID) {
 	// Draw all nodes
 	const tinygltf::Scene &scene = model.scenes[model.defaultScene];
 
@@ -574,35 +553,31 @@ void GltfObject::drawModel(const std::vector<PrimitiveObject>& primitiveObjects,
 	}
 
 	for (int node : scene.nodes) {
-		drawModelNodes(primitiveObjects, model, model.nodes[node]);
+		drawModelNodes(primitiveObjects, model, model.nodes[node], programID);
 	}
 }
 
-void GltfObject::render(glm::mat4 & cameraMatrix) {
-	GraphicsObject::render(cameraMatrix);
+void GltfObject::render(const GLuint programID) {
+	GraphicsObject::render(programID);
 
-	// Set animation data for linear blend skinning in shader
+	const GLuint jointMatricesID = glGetUniformLocation(programID, "jointMatrices");
+
 	for (const auto& skinObject : skinObjects)
 		glUniformMatrix4fv(static_cast<GLint>(jointMatricesID), static_cast<int>(skinObject.jointMatrices.size()), GL_FALSE, glm::value_ptr(skinObject.jointMatrices[0]));
 
-	// Lier le tableau de textures
+	glUniform1i(glGetUniformLocation(programID, "ignoreLightingPass"), 0);
+
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D_ARRAY, colorTexturesID);
 
-	// Spécifier l'unité de texture pour le shader
-	GLint location = glGetUniformLocation(getProgramId(), "textureArray");
-	if (location == -1) {
-		std::cerr << "Error: uniform 'textureArray' not found in shader program." << std::endl;
-	} else glUniform1i(location, 0);
+	glUniform1i(glGetUniformLocation(programID, "textureArray"), 0);
 
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D_ARRAY, metallicRoughnessTextureID);
 
-	location = glGetUniformLocation(getProgramId(), "metTextureArray");
-
-	GLint metMaterialIDLocation = glGetUniformLocation(getProgramId(), "animated");
+	const GLint metMaterialIDLocation = glGetUniformLocation(programID, "animated");
 	glUniform1i(metMaterialIDLocation, animated);
 
 	// Draw the GLTF graphics_object
-	drawModel(primitiveObjects, model);
+	drawModel(primitiveObjects, model, programID);
 }
