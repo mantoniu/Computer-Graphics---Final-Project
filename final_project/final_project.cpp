@@ -94,7 +94,7 @@ int main()
 	auto geometryPass = GeometryPass(WIDTH, HEIGHT);
 	auto ssaoPass = SSAOPass(WIDTH, HEIGHT, geometryPass);
 	auto ssaoBlurPass = SSAOBlurPass(WIDTH, HEIGHT, ssaoPass);
-	auto depthPass = DepthPass(WIDTH, HEIGHT, lights);
+	auto depthPass = DepthPass(8192, 8192, lights);
 	auto lightingPass = LightingPass(WIDTH, HEIGHT, lights, geometryPass, ssaoBlurPass, depthPass);
 
 	std::vector<RenderPass *> passes = {&geometryPass, &ssaoPass, &ssaoBlurPass, &depthPass, &lightingPass};
