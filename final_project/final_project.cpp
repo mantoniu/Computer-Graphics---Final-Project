@@ -5,15 +5,14 @@
 #include <iomanip>
 #include <random>
 
-#include "Objects/skybox/SkyBox.h"
-#include "objects/gltf_object/GltfObject.h"
+#include "3D_objects/skybox/SkyBox.h"
+#include "3D_objects/gltf_object/GltfObject.h"
 
-#include "camera/camera.h"
-#include <light/Light.h>
-
-#include <glm/gtc/type_ptr.hpp>
+#include "view_points/camera/camera.h"
+#include <view_points/lights/light/Light.h>
 #include <glm/detail/type_vec.hpp>
 
+#include "view_points/lights/spot_light/Spotlight.h"
 #include "passes/geometry_pass/GeometryPass.h"
 #include "passes/lighting_pass/LightingPass.h"
 #include "passes/ssao_blur_pass/SSAOBlurPass.h"
@@ -41,7 +40,7 @@ int main()
 
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // For MacOS
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // For macOS
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	// Open a window and create its OpenGL context
@@ -73,22 +72,25 @@ int main()
 	glEnable(GL_CULL_FACE);
 
     // ---------------------------
-	auto light = Light(glm::vec3(40, 21, 22), 1000, glm::vec3(1), glm::vec3(0), 90, 5, 100);
-	auto light2 = Light(glm::vec3(-49, 24, -2), 1000, glm::vec3(1), glm::vec3(0), 90, 5, 100);
+	auto spotLight1 = Spotlight(glm::vec3(-5.65517, 3.35241, 18.2637), 2, glm::vec3(1), -9.90, 0.154003, 20, 30);
+	auto spotLight2 = Spotlight(glm::vec3(-0.308003, 3.41245, 19.8179), 2, glm::vec3(1), -3.22801, 0.209002, 20, 30);
+	auto spotLight3 = Spotlight(glm::vec3(-8.88, 3.41245, 15.768), 2, glm::vec3(1), -3.88499, 0.132, 20, 30);
+	auto spotLight4 = Spotlight(glm::vec3(4.09714, 3.4899, 19.5193), 2, glm::vec3(1), -2.84999, 0.098001, 20, 30);
+	auto light = Light(glm::vec3(106.438, 57.1682, 9.46872), 1500, glm::vec3(1), -1.66101, -0.453002);
 
 	auto skybox = SkyBox();
 	skybox.setScale(glm::vec3(1000));
 
-	auto zombie = GltfObject("../final_project/3d_assets/zombie/untitled.gltf", true);
-	zombie.setTranslation(glm::vec3(-8.16, 3.7, 13.76));
-	zombie.setScale(glm::vec3(0.09));
+	auto zombie = GltfObject("../final_project/3D_assets/alien/alien.gltf", true);
+	zombie.setTranslation(glm::vec3(-2, 3.36, 14.8));
+	zombie.setScale(glm::vec3(0.003));
 	zombie.setRotation(90, glm::vec3(1,0, 0));
 
-	auto island = GltfObject("../final_project/3d_assets/island/untitled.gltf");
+	auto island = GltfObject("../final_project/3D_assets/island/island.gltf");
 	island.setScale(glm::vec3(30));
 
-	std::vector<GraphicsObject *> objects = {&skybox, &zombie, &island};
-	std::vector lights = {light, light2};
+	std::vector<GraphicsObject *> objects = {&zombie, &island, &skybox};
+	std::vector<Light *> lights = {&spotLight1, &spotLight2, &spotLight3, &spotLight4, &light};
 
 	// Passes
 	auto geometryPass = GeometryPass(WIDTH, HEIGHT);
@@ -104,7 +106,7 @@ int main()
 	float time = 0.0f;			// Animation time
 	float fTime = 0.0f;			// Time for measuring fps
 	unsigned long frames = 0;
-	static float playbackSpeed = 2.0f;
+	static float playbackSpeed = 1.0f;
 
 	for (const auto &pass: passes)
 		pass->setup();
@@ -113,7 +115,6 @@ int main()
 	{
 		skybox.setTranslation(camera.getPosition());
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 
 		for (const auto &pass: passes)
 			pass->render(objects, camera);
