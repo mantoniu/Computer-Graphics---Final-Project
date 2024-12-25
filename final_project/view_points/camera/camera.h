@@ -7,23 +7,16 @@
 #include <glm/glm.hpp>
 #include "glad/gl.h"
 #include "GLFW/glfw3.h"
+#include "view_points/view_point/ViewPoint.h"
 
-class Camera{
+class Camera : public ViewPoint{
     private:
         bool debug = false;
 
-        glm::float32 FoV;
-        glm::float32 zNear;
-        glm::float32 zFar;
-
         bool firstMouse = true;         
         float lastX = -1, lastY = -1;
-        float sensitivity;  
-
-        glm::vec3 eyeCenter;
-        glm::vec3 up = glm::vec3(0,1,0);
-        float viewAzimuth;
-        float viewPolar;
+        float sensitivity;
+        float moveSpeed = 0.5f;
 
         void updateEyeCenter();
 
@@ -33,15 +26,7 @@ class Camera{
         void onMouseChange(GLFWwindow *window, float xPos, float yPos);
 
         void displayData() const;
-
-        [[nodiscard]] glm::mat4 getVPMatrix() const;
-        [[nodiscard]] glm::vec3 getLookAt() const;
-        [[nodiscard]] glm::vec3 getUp() const;
-        [[nodiscard]] glm::vec3 getPosition() const;
-
-        [[nodiscard]] glm::mat4 getViewMatrix() const;
-
-        [[nodiscard]] glm::mat4 getProjectionMatrix() const;
+        float getAspectRatio() const override;
 };
 
 #endif
