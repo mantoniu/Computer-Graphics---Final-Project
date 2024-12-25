@@ -15,12 +15,12 @@ class LightingPass : public RenderPass {
     GeometryPass &geometryPass;
     SSAOBlurPass &ssaoBlurPass;
     DepthPass &depthPass;
-    std::vector<Light> &lights;
+    std::vector<Light *> &lights;
 
     void loadLightsUBOs();
 
 public:
-    LightingPass(int width, int height, std::vector<Light> &lights, GeometryPass &geometryPass,
+    LightingPass(int width, int height, std::vector<Light *> &lights, GeometryPass &geometryPass,
                  SSAOBlurPass &ssaoBlurPass, DepthPass &depthPass);
 
     void setup() override;

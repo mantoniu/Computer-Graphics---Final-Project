@@ -6,7 +6,7 @@
 
 #include <render/shader.h>
 
-DepthPass::DepthPass(const int width, const int height, std::vector<Light> &lights) : RenderPass(width, height,
+DepthPass::DepthPass(const int width, const int height, std::vector<Light *> &lights) : RenderPass(width, height,
         LoadShadersFromFile("../final_project/shaders/depth.vert", "../final_project/shaders/depth.frag")),
     lights(lights) {
 }
@@ -38,7 +38,7 @@ void DepthPass::render(const std::vector<GraphicsObject *> &objects, const Camer
     glViewport(0, 0, getWidth(), getHeight());
 
     for (int i = 0; i < lights.size(); i++) {
-        glm::mat4 lightModelMatrix = lights[i].getSpaceMatrix();
+        glm::mat4 lightModelMatrix = lights[i]->getVPMatrix();
 
         glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depthTexturesArray, 0, i);
         glClear(GL_DEPTH_BUFFER_BIT);

@@ -8,7 +8,7 @@
 
 #include "utils/renderQuad.h"
 
-LightingPass::LightingPass(const int width, const int height, std::vector<Light> &lights, GeometryPass &geometryPass,
+LightingPass::LightingPass(const int width, const int height, std::vector<Light *> &lights, GeometryPass &geometryPass,
                            SSAOBlurPass &ssaoBlurPass, DepthPass &depthPass) : RenderPass(width, height,
                                                                                    LoadShadersFromFile(
                                                                                        "../final_project/shaders/ssao.vert",
@@ -36,12 +36,12 @@ void LightingPass::loadLightsUBOs() {
     // Generate and bind the UBO
     glGenBuffers(1, &lightsUBO);
     glBindBuffer(GL_UNIFORM_BUFFER, lightsUBO);
-    glBufferData(GL_UNIFORM_BUFFER, static_cast<long long>(uboSize), nullptr, GL_STATIC_DRAW);
+    glBufferData(GL_UNIFORM_BUFFER, static_cast<long long>(uboSize), nullptr, GL_DYNAMIC_DRAW);
 
     // Load light data into the UBO
     lightStruct uboData[lights.size()];
     for (int i = 0; i < lights.size(); i++) {
-        uboData[i] = lights[i].toStruct();
+        uboData[i] = lights[i]->toStruct();
     }
 
     // Copy the data to the UBO

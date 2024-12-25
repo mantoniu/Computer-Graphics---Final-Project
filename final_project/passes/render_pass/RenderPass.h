@@ -5,8 +5,8 @@
 #ifndef RENDERCLASS_H
 #define RENDERCLASS_H
 #include <vector>
-#include <camera/camera.h>
-#include "objects/graphics_object/GraphicsObject.h"
+#include <view_points/camera/camera.h>
+#include "3D_objects/graphics_object/GraphicsObject.h"
 
 
 class RenderPass {

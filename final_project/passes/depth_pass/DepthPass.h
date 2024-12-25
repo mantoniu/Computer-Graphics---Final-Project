@@ -4,16 +4,16 @@
 
 #ifndef DEPTHPASS_H
 #define DEPTHPASS_H
-#include <light/Light.h>
+#include <view_points/lights/light/Light.h>
 #include "passes/render_pass/RenderPass.h"
 
 class DepthPass : public RenderPass {
     GLuint depthTexturesArray = 0;
     GLuint lightsUBO = 0;
-    std::vector<Light> &lights;
+    std::vector<Light *> &lights;
 
 public:
-    DepthPass(int width, int height, std::vector<Light> &lights);
+    DepthPass(int width, int height, std::vector<Light *> &lights);
 
     void createDepthTextureArray();
 
