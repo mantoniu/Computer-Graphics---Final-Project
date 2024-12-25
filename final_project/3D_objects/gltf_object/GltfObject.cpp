@@ -450,14 +450,14 @@ std::vector<PrimitiveObject> GltfObject::bindModel(tinygltf::Model &model) {
 }
 
 
-GLuint GltfObject::initTextureArrays(std::vector<int> textureIndices) const {
+GLuint GltfObject::initTextureArrays(const std::vector<int> &textureIndices) const {
     GLuint textureArrayID;
     glGenTextures(1, &textureArrayID);
     glBindTexture(GL_TEXTURE_2D_ARRAY, textureArrayID);
 
-    int width = 1024;
-    int height = 1024;
-    int layerCount = textureIndices.size();
+    constexpr int width = 1024;
+    constexpr int height = 1024;
+    const int layerCount = static_cast<int>(textureIndices.size());
 
     glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGBA, width, height, layerCount, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 
@@ -574,7 +574,7 @@ void GltfObject::drawModelNodes(const std::vector<PrimitiveObject> &primitiveObj
 }
 
 void GltfObject::drawModel(const std::vector<PrimitiveObject> &primitiveObjects,
-                           tinygltf::Model &model, GLuint programID) {
+                           tinygltf::Model &model, const GLuint programID) {
     // Draw all nodes
     const tinygltf::Scene &scene = model.scenes[model.defaultScene];
 
@@ -595,7 +595,7 @@ void GltfObject::render(const GLuint programID) {
 
     for (const auto &skinObject: skinObjects)
         glUniformMatrix4fv(static_cast<GLint>(jointMatricesID), static_cast<int>(skinObject.jointMatrices.size()),
-                           GL_FALSE, glm::value_ptr(skinObject
+                           GL_FALSE, value_ptr(skinObject
                                .jointMatrices[0]));
 
     glUniform1i(glGetUniformLocation(programID, "ignoreLightingPass"), 0);

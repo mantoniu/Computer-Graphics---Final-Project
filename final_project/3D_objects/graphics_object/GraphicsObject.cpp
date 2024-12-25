@@ -5,7 +5,6 @@
 #include "GraphicsObject.h"
 
 #include <iostream>
-#include <ostream>
 #include <glm/gtc/matrix_transform.hpp>
 #include <3D_objects/cube/Cube.h>
 #include <render/shader.h>

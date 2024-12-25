@@ -4,7 +4,6 @@
 
 #ifndef SPOTLIGHT_H
 #define SPOTLIGHT_H
-#include <tiny_gltf.h>
 #include <glm/detail/type_vec.hpp>
 
 #include "../light/Light.h"

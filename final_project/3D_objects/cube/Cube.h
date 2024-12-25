@@ -6,7 +6,6 @@
 #define BOX_H
 #include <cmath>
 #include <vector>
-#include <glm/detail/type_mat.hpp>
 #include <glm/detail/type_vec.hpp>
 #include <glm/detail/type_vec3.hpp>
 #include "3D_objects/graphics_object/GraphicsObject.h"

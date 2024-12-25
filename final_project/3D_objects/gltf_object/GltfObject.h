@@ -111,7 +111,7 @@ class GltfObject : public GraphicsObject{
 		void bindModelNodes(std::vector<PrimitiveObject> &primitiveObjects, tinygltf::Model &model, tinygltf::Node &node);
 		std::vector<PrimitiveObject> bindModel(tinygltf::Model &model);
 
-		[[nodiscard]] GLuint initTextureArrays(std::vector<int> textureIndices) const;
+		[[nodiscard]] GLuint initTextureArrays(const std::vector<int> &textureIndices) const;
 
 		void loadAndResizeTexture(int textureIndex, int width, int height);
 

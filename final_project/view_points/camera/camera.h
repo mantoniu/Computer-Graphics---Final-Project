@@ -26,7 +26,8 @@ class Camera : public ViewPoint{
         void onMouseChange(GLFWwindow *window, float xPos, float yPos);
 
         void displayData() const;
-        float getAspectRatio() const override;
+
+        [[nodiscard]] float getAspectRatio() const override;
 };
 
 #endif
