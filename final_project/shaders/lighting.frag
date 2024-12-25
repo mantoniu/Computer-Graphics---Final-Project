@@ -14,11 +14,25 @@ uniform sampler2DArray depthArray;
 float specularStrength = 0.3;
 float shininess = 15.0;
 
+#define POINT_LIGHT 0
+#define SPOT_LIGHT 1
+
 struct structLight {
     vec3 position;
     float intensity;
+
     vec3 color;
+    float padding1;
+
     mat4 spaceMatrix;
+
+    int type;
+    float innerConeAngle;
+    float outerConeAngle;
+    float padding2;
+
+    vec3 direction;
+    float padding3;
 };
 
 layout(std140) uniform Lights {
@@ -35,6 +49,24 @@ float shadowCalculation(vec4 fragPosLightSpace, int i) {
 
     float shadow = fragPosLightSpace.z >= 0 && currentDepth >= existingDepth + bias ? 0.2 : 1.0;
     return shadow;
+}
+
+float calculateSpotLightEffect(structLight light, vec3 worldPos) {
+    // On calcule la direction entre la position de la lumière et le point éclairé
+    vec3 L = normalize(worldPos - light.position);
+
+    // On compare avec la direction du spot
+    float cosTheta = dot(L, normalize(light.direction));
+
+    // Conversion des angles en cosinus
+    float innerCos = cos(light.innerConeAngle);
+    float outerCos = cos(light.outerConeAngle);
+
+    // Calcul de l'atténuation du spot
+    float epsilon = innerCos - outerCos;
+    float intensity = clamp((cosTheta - outerCos) / epsilon, 0.0, 1.0);
+
+    return intensity;
 }
 
 vec3 computePhongLighting(vec3 fragPos, vec3 worldPosition, vec3 normal, vec3 diffuse, float ao) {
@@ -61,9 +93,20 @@ vec3 computePhongLighting(vec3 fragPos, vec3 worldPosition, vec3 normal, vec3 di
         vec3 specularLight = specularStrength * spec * lightColor;
 
         float attenuation = lightIntensity / (distance * distance);
+        float intensity = 1.0;
 
-        vec3 lightContribution = shadowFactor * attenuation * (diffuseLight + specularLight);
-        lightContribution *= mix(1.0, ao, 0.5);
+        // Handle different light types
+        if (lights[i].type == POINT_LIGHT) {
+            // Point light attenuation is already handled above
+            intensity = 1.0;
+        }
+        else if (lights[i].type == SPOT_LIGHT) {
+            intensity = calculateSpotLightEffect(lights[i], worldPosition);
+            if (intensity <= 0.0) continue;
+        }
+
+        vec3 lightContribution = shadowFactor * attenuation * intensity * (diffuseLight + specularLight);
+        lightContribution *= mix(1.0, ao, 2);
 
         accumulatedLighting += lightContribution;
     }
@@ -74,7 +117,7 @@ void main() {
     float ignoreLightingPass = texture(gIgnoreLightingPass, TexCoords).r;
     vec3 Diffuse = texture(gAlbedo, TexCoords).rgb;
 
-    if (ignoreLightingPass==1){
+    if (ignoreLightingPass == 1) {
         FragColor = vec4(Diffuse, 1.0);
         return;
     }
@@ -84,13 +127,13 @@ void main() {
     vec3 Normal = normalize(texture(gNormal, TexCoords).rgb);
     float AmbientOcclusion = texture(ssao, TexCoords).r;
 
-    vec3 ambient = 0.3 * Diffuse * AmbientOcclusion;
+    vec3 ambient = 0.05 * Diffuse * pow(AmbientOcclusion, 2);
 
     vec3 phongLighting = computePhongLighting(FragPos, worldPosition, Normal, Diffuse, AmbientOcclusion);
 
     vec3 lighting = ambient + phongLighting;
 
-    lighting = pow(lighting, vec3(1.0/2.2));
+    lighting = pow(lighting, vec3(1.0/2.2));// Gamma correction
 
     FragColor = vec4(lighting, 1.0);
 }
