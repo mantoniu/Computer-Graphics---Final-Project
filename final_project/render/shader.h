@@ -6,6 +6,6 @@
 
 GLuint LoadShadersFromFile(const char *vertex_file_path, const char *fragment_file_path);
 
-GLuint LoadShadersFromString(const std::string& VertexShaderCode, const std::string &FragmentShaderCode);
+GLuint LoadShadersFromString(const std::string &VertexShaderCode, const std::string &FragmentShaderCode);
 
 #endif
