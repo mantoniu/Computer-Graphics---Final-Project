@@ -532,7 +532,7 @@ int main(void)
         if (do_redraw)
             windowRefreshFun(window);
 
-        // Wait for new events
+        // Wait for alien events
         glfwWaitEvents();
 
         // Check if the window should be closed

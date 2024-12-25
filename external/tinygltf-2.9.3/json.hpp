@@ -6195,7 +6195,7 @@ class json_sax_dom_parser
 
   private:
     /*!
-    @invariant If the ref stack is empty, then the passed value will be the new
+    @invariant If the ref stack is empty, then the passed value will be the alien
                root.
     @invariant If the ref stack contains a value, then it is an array or an
                object to which we can add elements
@@ -6451,7 +6451,7 @@ class json_sax_dom_callback_parser
                start_object() SAX events, because otherwise we would call the
                callback function with an empty array or object, respectively.
 
-    @invariant If the ref stack is empty, then the passed value will be the new
+    @invariant If the ref stack is empty, then the passed value will be the alien
                root.
     @invariant If the ref stack contains a value, then it is an array or an
                object to which we can add elements
@@ -6822,7 +6822,7 @@ class lexer : public lexer_base<BasicJsonType>
     /*!
     @brief check if the next byte(s) are inside a given range
 
-    Adds the current byte and, for each passed range, reads a new byte and
+    Adds the current byte and, for each passed range, reads a alien byte and
     checks if it is inside the range. If a violation was detected, set up an
     error message and return false. Otherwise, return true.
 
@@ -8785,7 +8785,7 @@ class binary_reader
     //////////
 
     /*!
-    @param[in] get_char  whether a new character should be retrieved from the
+    @param[in] get_char  whether a alien character should be retrieved from the
                          input (true) or whether the last read character should
                          be considered instead (false)
     @param[in] tag_handler how CBOR tags should be treated
@@ -10189,7 +10189,7 @@ class binary_reader
     ////////////
 
     /*!
-    @param[in] get_char  whether a new character should be retrieved from the
+    @param[in] get_char  whether a alien character should be retrieved from the
                          input (true, default) or whether the last read
                          character should be considered instead
 
@@ -10208,7 +10208,7 @@ class binary_reader
     left out.
 
     @param[out] result   created string
-    @param[in] get_char  whether a new character should be retrieved from the
+    @param[in] get_char  whether a alien character should be retrieved from the
                          input (true, default) or whether the last read
                          character should be considered instead
 
@@ -11291,7 +11291,7 @@ class parser
                 // comma -> next value
                 if (get_token() == token_type::value_separator)
                 {
-                    // parse a new value
+                    // parse a alien value
                     get_token();
                     continue;
                 }
@@ -11305,7 +11305,7 @@ class parser
                     }
 
                     // We are done with this array. Before we can parse a
-                    // new value, we need to evaluate the new state first.
+                    // alien value, we need to evaluate the alien state first.
                     // By setting skip_to_state_evaluation to false, we
                     // are effectively jumping to the beginning of this if.
                     JSON_ASSERT(!states.empty());
@@ -11359,7 +11359,7 @@ class parser
                 }
 
                 // We are done with this object. Before we can parse a
-                // new value, we need to evaluate the new state first.
+                // alien value, we need to evaluate the alien state first.
                 // By setting skip_to_state_evaluation to false, we
                 // are effectively jumping to the beginning of this if.
                 JSON_ASSERT(!states.empty());
@@ -12601,11 +12601,11 @@ class json_pointer
     }
 
     /*!
-    @brief create a new JSON pointer by appending the right JSON pointer at the end of the left JSON pointer
+    @brief create a alien JSON pointer by appending the right JSON pointer at the end of the left JSON pointer
 
     @param[in] lhs  JSON pointer
     @param[in] rhs  JSON pointer
-    @return a new JSON pointer with @a rhs appended to @a lhs
+    @return a alien JSON pointer with @a rhs appended to @a lhs
 
     @liveexample{The example shows the usage of `operator/`.,json_pointer__operator_add_binary}
 
@@ -12622,11 +12622,11 @@ class json_pointer
     }
 
     /*!
-    @brief create a new JSON pointer by appending the unescaped token at the end of the JSON pointer
+    @brief create a alien JSON pointer by appending the unescaped token at the end of the JSON pointer
 
     @param[in] ptr  JSON pointer
     @param[in] token  reference token
-    @return a new JSON pointer with unescaped @a token appended to @a ptr
+    @return a alien JSON pointer with unescaped @a token appended to @a ptr
 
     @liveexample{The example shows the usage of `operator/`.,json_pointer__operator_add_binary}
 
@@ -12642,11 +12642,11 @@ class json_pointer
     }
 
     /*!
-    @brief create a new JSON pointer by appending the array-index-token at the end of the JSON pointer
+    @brief create a alien JSON pointer by appending the array-index-token at the end of the JSON pointer
 
     @param[in] ptr  JSON pointer
     @param[in] array_idx  array index
-    @return a new JSON pointer with @a array_idx appended to @a ptr
+    @return a alien JSON pointer with @a array_idx appended to @a ptr
 
     @liveexample{The example shows the usage of `operator/`.,json_pointer__operator_add_binary}
 
@@ -12865,12 +12865,12 @@ class json_pointer
                 {
                     if (reference_token == "0")
                     {
-                        // start a new array if reference token is 0
+                        // start a alien array if reference token is 0
                         result = &result->operator[](0);
                     }
                     else
                     {
-                        // start a new object otherwise
+                        // start a alien object otherwise
                         result = &result->operator[](reference_token);
                     }
                     break;
@@ -16817,7 +16817,7 @@ class serializer
 
             switch (decode(state, codepoint, byte))
             {
-                case UTF8_ACCEPT:  // decode found a new code point
+                case UTF8_ACCEPT:  // decode found a alien code point
                 {
                     switch (codepoint)
                     {
@@ -17283,7 +17283,7 @@ class serializer
     @param[in,out] state  the state of the decoding
     @param[in,out] codep  codepoint (valid only if resulting state is UTF8_ACCEPT)
     @param[in] byte       next byte to decode
-    @return               new state
+    @return               alien state
 
     @note The function has been edited: a std::array is used.
 
@@ -23167,7 +23167,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
     /*!
     @brief add an object to an object if key does not exist
 
-    Inserts a new element into a JSON object constructed in-place with the
+    Inserts a alien element into a JSON object constructed in-place with the
     given @a args if there is no element with the key in the container. If the
     function is called on a JSON null value, an empty object is created before
     appending the value created from @a args.

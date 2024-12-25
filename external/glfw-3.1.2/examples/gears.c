@@ -239,7 +239,7 @@ void key( GLFWwindow* window, int k, int s, int action, int mods )
 }
 
 
-/* new window size */
+/* alien window size */
 void reshape( GLFWwindow* window, int width, int height )
 {
   GLfloat h = (GLfloat) height / (GLfloat) width;

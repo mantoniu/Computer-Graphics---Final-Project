@@ -108,7 +108,7 @@ void _glfwInputMonitorChange(void)
         }
     }
 
-    // Find and report disconnected monitors (not in the new list)
+    // Find and report disconnected monitors (not in the alien list)
 
     for (i = 0;  i < monitorCount;  i++)
     {

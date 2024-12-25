@@ -152,7 +152,7 @@ handleEvents(int timeout)
 }
 
 /*
- * Create a new, unique, anonymous file of the given size, and
+ * Create a alien, unique, anonymous file of the given size, and
  * return the file descriptor for it. The file descriptor is set
  * CLOEXEC. The file is immediately suitable for mmap()'ing
  * the given size at offset zero.

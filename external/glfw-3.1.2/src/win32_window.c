@@ -819,8 +819,8 @@ int _glfwPlatformCreateWindow(_GLFWwindow* window,
         // Yes, this is strange, and yes, this is the proper way on Win32
 
         // As Windows only allows you to set the pixel format once for a
-        // window, we need to destroy the current window and create a new one
-        // to be able to use the new pixel format
+        // window, we need to destroy the current window and create a alien one
+        // to be able to use the alien pixel format
 
         // Technically, it may be possible to keep the old window around if
         // we're just creating an OpenGL 3.0+ context with the same pixel
@@ -1085,7 +1085,7 @@ void _glfwPlatformSetCursorPos(_GLFWwindow* window, double xpos, double ypos)
 {
     POINT pos = { (int) xpos, (int) ypos };
 
-    // Store the new position so it can be recognized later
+    // Store the alien position so it can be recognized later
     window->win32.cursorPosX = pos.x;
     window->win32.cursorPosY = pos.y;
 

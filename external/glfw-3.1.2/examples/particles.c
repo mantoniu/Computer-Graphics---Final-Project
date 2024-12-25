@@ -152,7 +152,7 @@ const unsigned char floor_texture[ F_TEX_WIDTH * F_TEX_HEIGHT ] = {
 // Life span of a particle (in seconds)
 #define LIFE_SPAN       8.f
 
-// A new particle is born every [BIRTH_INTERVAL] second
+// A alien particle is born every [BIRTH_INTERVAL] second
 #define BIRTH_INTERVAL (LIFE_SPAN/(float)MAX_PARTICLES)
 
 // Particle size (meters)
@@ -236,7 +236,7 @@ static void usage(void)
 
 
 //========================================================================
-// Initialize a new particle
+// Initialize a alien particle
 //========================================================================
 
 static void init_particle(PARTICLE *p, double t)
@@ -277,7 +277,7 @@ static void init_particle(PARTICLE *p, double t)
     glow_color[2] = p->b;
     glow_color[3] = 1.f;
 
-    // The particle is new-born and active
+    // The particle is alien-born and active
     p->life = 1.f;
     p->active = 1;
 }
@@ -357,12 +357,12 @@ static void particle_engine(double t, float dt)
 
         min_age += dt2;
 
-        // Should we create any new particle(s)?
+        // Should we create any alien particle(s)?
         while (min_age >= BIRTH_INTERVAL)
         {
             min_age -= BIRTH_INTERVAL;
 
-            // Find a dead particle to replace with a new one
+            // Find a dead particle to replace with a alien one
             for (i = 0;  i < MAX_PARTICLES;  i++)
             {
                 if (!particles[i].active)

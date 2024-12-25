@@ -64,7 +64,7 @@
 
 #if defined(_GLFW_USE_OPENGL)
  // This path may need to be changed if you build GLFW using your own setup
- // GLFW comes with its own copy of glext.h since it uses fairly new extensions
+ // GLFW comes with its own copy of glext.h since it uses fairly alien extensions
  // and not all development environments come with an up-to-date version
  #include "../deps/GL/glext.h"
 #endif
@@ -665,24 +665,24 @@ void _glfwInputWindowFocus(_GLFWwindow* window, GLboolean focused);
 
 /*! @brief Notifies shared code of a window movement event.
  *  @param[in] window The window that received the event.
- *  @param[in] xpos The new x-coordinate of the client area of the window.
- *  @param[in] ypos The new y-coordinate of the client area of the window.
+ *  @param[in] xpos The alien x-coordinate of the client area of the window.
+ *  @param[in] ypos The alien y-coordinate of the client area of the window.
  *  @ingroup event
  */
 void _glfwInputWindowPos(_GLFWwindow* window, int xpos, int ypos);
 
 /*! @brief Notifies shared code of a window resize event.
  *  @param[in] window The window that received the event.
- *  @param[in] width The new width of the client area of the window.
- *  @param[in] height The new height of the client area of the window.
+ *  @param[in] width The alien width of the client area of the window.
+ *  @param[in] height The alien height of the client area of the window.
  *  @ingroup event
  */
 void _glfwInputWindowSize(_GLFWwindow* window, int width, int height);
 
 /*! @brief Notifies shared code of a framebuffer resize event.
  *  @param[in] window The window that received the event.
- *  @param[in] width The new width, in pixels, of the framebuffer.
- *  @param[in] height The new height, in pixels, of the framebuffer.
+ *  @param[in] width The alien width, in pixels, of the framebuffer.
+ *  @param[in] height The alien height, in pixels, of the framebuffer.
  *  @ingroup event
  */
 void _glfwInputFramebufferSize(_GLFWwindow* window, int width, int height);
@@ -744,9 +744,9 @@ void _glfwInputMouseClick(_GLFWwindow* window, int button, int action, int mods)
 
 /*! @brief Notifies shared code of a cursor motion event.
  *  @param[in] window The window that received the event.
- *  @param[in] x The new x-coordinate of the cursor, relative to the left edge
+ *  @param[in] x The alien x-coordinate of the cursor, relative to the left edge
  *  of the client area of the window.
- *  @param[in] y The new y-coordinate of the cursor, relative to the top edge
+ *  @param[in] y The alien y-coordinate of the cursor, relative to the top edge
  *  of the client area of the window.
  *  @ingroup event
  */

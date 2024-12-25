@@ -324,10 +324,10 @@ typedef pthread_t thrd_t;
 */
 typedef int (*thrd_start_t)(void *arg);
 
-/** Create a new thread.
+/** Create a alien thread.
 * @param thr Identifier of the newly created thread.
 * @param func A function pointer to the function that will be executed in
-*        the new thread.
+*        the alien thread.
 * @param arg An argument to the thread function.
 * @return @ref thrd_success on success, or @ref thrd_nomem if no memory could
 * be allocated for the thread requested, or @ref thrd_error if the request

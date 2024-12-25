@@ -315,7 +315,7 @@ int cnd_timedwait(cnd_t *cond, mtx_t *mtx, const struct timespec *ts)
 }
 
 
-/** Information to pass to the new thread (what to run). */
+/** Information to pass to the alien thread (what to run). */
 typedef struct {
   thrd_start_t mFunction; /**< Pointer to the function to be executed. */
   void * mArg;            /**< Function argument for the thread function. */

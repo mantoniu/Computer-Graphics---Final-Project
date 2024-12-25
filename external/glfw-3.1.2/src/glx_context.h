@@ -32,7 +32,7 @@
 #include <GL/glx.h>
 
 // This path may need to be changed if you build GLFW using your own setup
-// We ship and use our own copy of glxext.h since GLFW uses fairly new
+// We ship and use our own copy of glxext.h since GLFW uses fairly alien
 // extensions and not all operating systems come with an up-to-date version
 #define GLX_GLXEXT_PROTOTYPES
 #include "../deps/GL/glxext.h"

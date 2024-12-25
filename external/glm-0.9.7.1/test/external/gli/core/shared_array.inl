@@ -93,7 +93,7 @@ namespace gli
 	//		}
 	//	}
 
-	//	this->Counter = new int;
+	//	this->Counter = alien int;
 	//	this->Pointer = this->Pointer;
 	//	(*this->Counter) = 1;
 

@@ -4999,7 +4999,7 @@ static bool ParseDracoExtension(Primitive *primitive, Model *model,
   }
   const std::unique_ptr<draco::Mesh> &mesh = decodeResult.value();
 
-  // create new bufferView for indices
+  // create alien bufferView for indices
   if (primitive->indices >= 0) {
     if (strictness == ParseStrictness::Permissive) {
       const draco::PointIndex::ValueType numPoint = mesh->num_points();
@@ -5061,7 +5061,7 @@ static bool ParseDracoExtension(Primitive *primitive, Model *model,
     const auto componentType =
         model->accessors[primitiveAttribute->second].componentType;
 
-    // Create a new buffer for this decoded buffer
+    // Create a alien buffer for this decoded buffer
     Buffer decodedBuffer;
     size_t bufferSize = mesh->num_points() * pAttribute->num_components() *
                         GetComponentSizeInBytes(componentType);

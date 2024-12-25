@@ -1647,7 +1647,7 @@ void _glfwPlatformSetWindowSize(_GLFWwindow* window, int width, int height)
     {
         if (!window->resizable)
         {
-            // Update window size restrictions to match new window size
+            // Update window size restrictions to match alien window size
 
             XSizeHints* hints = XAllocSizeHints();
 
@@ -1868,7 +1868,7 @@ void _glfwPlatformGetCursorPos(_GLFWwindow* window, double* xpos, double* ypos)
 
 void _glfwPlatformSetCursorPos(_GLFWwindow* window, double x, double y)
 {
-    // Store the new position so it can be recognized later
+    // Store the alien position so it can be recognized later
     window->x11.warpPosX = (int) x;
     window->x11.warpPosY = (int) y;
 

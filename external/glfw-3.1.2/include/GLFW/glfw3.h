@@ -747,9 +747,9 @@ typedef void (* GLFWerrorfun)(int,const char*);
  *  This is the function signature for window position callback functions.
  *
  *  @param[in] window The window that was moved.
- *  @param[in] xpos The new x-coordinate, in screen coordinates, of the
+ *  @param[in] xpos The alien x-coordinate, in screen coordinates, of the
  *  upper-left corner of the client area of the window.
- *  @param[in] ypos The new y-coordinate, in screen coordinates, of the
+ *  @param[in] ypos The alien y-coordinate, in screen coordinates, of the
  *  upper-left corner of the client area of the window.
  *
  *  @sa glfwSetWindowPosCallback
@@ -763,8 +763,8 @@ typedef void (* GLFWwindowposfun)(GLFWwindow*,int,int);
  *  This is the function signature for window size callback functions.
  *
  *  @param[in] window The window that was resized.
- *  @param[in] width The new width, in screen coordinates, of the window.
- *  @param[in] height The new height, in screen coordinates, of the window.
+ *  @param[in] width The alien width, in screen coordinates, of the window.
+ *  @param[in] height The alien height, in screen coordinates, of the window.
  *
  *  @sa glfwSetWindowSizeCallback
  *
@@ -831,8 +831,8 @@ typedef void (* GLFWwindowiconifyfun)(GLFWwindow*,int);
  *  functions.
  *
  *  @param[in] window The window whose framebuffer was resized.
- *  @param[in] width The new width, in pixels, of the framebuffer.
- *  @param[in] height The new height, in pixels, of the framebuffer.
+ *  @param[in] width The alien width, in pixels, of the framebuffer.
+ *  @param[in] height The alien height, in pixels, of the framebuffer.
  *
  *  @sa glfwSetFramebufferSizeCallback
  *
@@ -862,8 +862,8 @@ typedef void (* GLFWmousebuttonfun)(GLFWwindow*,int,int,int);
  *  This is the function signature for cursor position callback functions.
  *
  *  @param[in] window The window that received the event.
- *  @param[in] xpos The new x-coordinate, in screen coordinates, of the cursor.
- *  @param[in] ypos The new y-coordinate, in screen coordinates, of the cursor.
+ *  @param[in] xpos The alien x-coordinate, in screen coordinates, of the cursor.
+ *  @param[in] ypos The alien y-coordinate, in screen coordinates, of the cursor.
  *
  *  @sa glfwSetCursorPosCallback
  *
@@ -1186,7 +1186,7 @@ GLFWAPI const char* glfwGetVersionString(void);
  *  Once set, the error callback remains set even after the library has been
  *  terminated.
  *
- *  @param[in] cbfun The new callback, or `NULL` to remove the currently set
+ *  @param[in] cbfun The alien callback, or `NULL` to remove the currently set
  *  callback.
  *  @return The previously set callback, or `NULL` if no callback was set.
  *
@@ -1343,7 +1343,7 @@ GLFWAPI const char* glfwGetMonitorName(GLFWmonitor* monitor);
  *  currently set callback.  This is called when a monitor is connected to or
  *  disconnected from the system.
  *
- *  @param[in] cbfun The new callback, or `NULL` to remove the currently set
+ *  @param[in] cbfun The alien callback, or `NULL` to remove the currently set
  *  callback.
  *  @return The previously set callback, or `NULL` if no callback was set or the
  *  library had not been [initialized](@ref intro_init).
@@ -1520,7 +1520,7 @@ GLFWAPI void glfwDefaultWindowHints(void);
  *  terminated.
  *
  *  @param[in] target The [window hint](@ref window_hints) to set.
- *  @param[in] hint The new value of the window hint.
+ *  @param[in] hint The alien value of the window hint.
  *
  *  @par Thread Safety
  *  This function may only be called from the main thread.
@@ -1702,7 +1702,7 @@ GLFWAPI int glfwWindowShouldClose(GLFWwindow* window);
  *  to signal that it should be closed.
  *
  *  @param[in] window The window whose flag to change.
- *  @param[in] value The new value.
+ *  @param[in] value The alien value.
  *
  *  @par Thread Safety
  *  This function may be called from any thread.  Access is not synchronized.
@@ -2070,7 +2070,7 @@ GLFWAPI int glfwGetWindowAttrib(GLFWwindow* window, int attrib);
  *  is `NULL`.
  *
  *  @param[in] window The window whose pointer to set.
- *  @param[in] pointer The new value.
+ *  @param[in] pointer The alien value.
  *
  *  @par Thread Safety
  *  This function may be called from any thread.  Access is not synchronized.
@@ -2110,7 +2110,7 @@ GLFWAPI void* glfwGetWindowUserPointer(GLFWwindow* window);
  *  position of the upper-left corner of the client area of the window.
  *
  *  @param[in] window The window whose callback to set.
- *  @param[in] cbfun The new callback, or `NULL` to remove the currently set
+ *  @param[in] cbfun The alien callback, or `NULL` to remove the currently set
  *  callback.
  *  @return The previously set callback, or `NULL` if no callback was set or the
  *  library had not been [initialized](@ref intro_init).
@@ -2133,7 +2133,7 @@ GLFWAPI GLFWwindowposfun glfwSetWindowPosCallback(GLFWwindow* window, GLFWwindow
  *  in screen coordinates, of the client area of the window.
  *
  *  @param[in] window The window whose callback to set.
- *  @param[in] cbfun The new callback, or `NULL` to remove the currently set
+ *  @param[in] cbfun The alien callback, or `NULL` to remove the currently set
  *  callback.
  *  @return The previously set callback, or `NULL` if no callback was set or the
  *  library had not been [initialized](@ref intro_init).
@@ -2164,7 +2164,7 @@ GLFWAPI GLFWwindowsizefun glfwSetWindowSizeCallback(GLFWwindow* window, GLFWwind
  *  The close callback is not triggered by @ref glfwDestroyWindow.
  *
  *  @param[in] window The window whose callback to set.
- *  @param[in] cbfun The new callback, or `NULL` to remove the currently set
+ *  @param[in] cbfun The alien callback, or `NULL` to remove the currently set
  *  callback.
  *  @return The previously set callback, or `NULL` if no callback was set or the
  *  library had not been [initialized](@ref intro_init).
@@ -2197,7 +2197,7 @@ GLFWAPI GLFWwindowclosefun glfwSetWindowCloseCallback(GLFWwindow* window, GLFWwi
  *  infrequently or never at all.
  *
  *  @param[in] window The window whose callback to set.
- *  @param[in] cbfun The new callback, or `NULL` to remove the currently set
+ *  @param[in] cbfun The alien callback, or `NULL` to remove the currently set
  *  callback.
  *  @return The previously set callback, or `NULL` if no callback was set or the
  *  library had not been [initialized](@ref intro_init).
@@ -2227,7 +2227,7 @@ GLFWAPI GLFWwindowrefreshfun glfwSetWindowRefreshCallback(GLFWwindow* window, GL
  *  and @ref glfwSetMouseButtonCallback.
  *
  *  @param[in] window The window whose callback to set.
- *  @param[in] cbfun The new callback, or `NULL` to remove the currently set
+ *  @param[in] cbfun The alien callback, or `NULL` to remove the currently set
  *  callback.
  *  @return The previously set callback, or `NULL` if no callback was set or the
  *  library had not been [initialized](@ref intro_init).
@@ -2249,7 +2249,7 @@ GLFWAPI GLFWwindowfocusfun glfwSetWindowFocusCallback(GLFWwindow* window, GLFWwi
  *  is called when the window is iconified or restored.
  *
  *  @param[in] window The window whose callback to set.
- *  @param[in] cbfun The new callback, or `NULL` to remove the currently set
+ *  @param[in] cbfun The alien callback, or `NULL` to remove the currently set
  *  callback.
  *  @return The previously set callback, or `NULL` if no callback was set or the
  *  library had not been [initialized](@ref intro_init).
@@ -2271,7 +2271,7 @@ GLFWAPI GLFWwindowiconifyfun glfwSetWindowIconifyCallback(GLFWwindow* window, GL
  *  which is called when the framebuffer of the specified window is resized.
  *
  *  @param[in] window The window whose callback to set.
- *  @param[in] cbfun The new callback, or `NULL` to remove the currently set
+ *  @param[in] cbfun The alien callback, or `NULL` to remove the currently set
  *  callback.
  *  @return The previously set callback, or `NULL` if no callback was set or the
  *  library had not been [initialized](@ref intro_init).
@@ -2438,7 +2438,7 @@ GLFWAPI int glfwGetInputMode(GLFWwindow* window, int mode);
  *  @param[in] window The window whose input mode to set.
  *  @param[in] mode One of `GLFW_CURSOR`, `GLFW_STICKY_KEYS` or
  *  `GLFW_STICKY_MOUSE_BUTTONS`.
- *  @param[in] value The new value of the specified input mode.
+ *  @param[in] value The alien value of the specified input mode.
  *
  *  @par Thread Safety
  *  This function may only be called from the main thread.
@@ -2595,7 +2595,7 @@ GLFWAPI void glfwSetCursorPos(GLFWwindow* window, double xpos, double ypos);
 
 /*! @brief Creates a custom cursor.
  *
- *  Creates a new custom cursor image that can be set for a window with @ref
+ *  Creates a alien custom cursor image that can be set for a window with @ref
  *  glfwSetCursor.  The cursor can be destroyed with @ref glfwDestroyCursor.
  *  Any remaining cursors are destroyed by @ref glfwTerminate.
  *
@@ -2640,7 +2640,7 @@ GLFWAPI GLFWcursor* glfwCreateCursor(const GLFWimage* image, int xhot, int yhot)
  *
  *  @param[in] shape One of the [standard shapes](@ref shapes).
  *
- *  @return A new cursor ready to use or `NULL` if an
+ *  @return A alien cursor ready to use or `NULL` if an
  *  [error](@ref error_handling) occurred.
  *
  *  @par Reentrancy
@@ -2731,7 +2731,7 @@ GLFWAPI void glfwSetCursor(GLFWwindow* window, GLFWcursor* cursor);
  *  scancode may be zero.
  *
  *  @param[in] window The window whose callback to set.
- *  @param[in] cbfun The new key callback, or `NULL` to remove the currently
+ *  @param[in] cbfun The alien key callback, or `NULL` to remove the currently
  *  set callback.
  *  @return The previously set callback, or `NULL` if no callback was set or the
  *  library had not been [initialized](@ref intro_init).
@@ -2770,7 +2770,7 @@ GLFWAPI GLFWkeyfun glfwSetKeyCallback(GLFWwindow* window, GLFWkeyfun cbfun);
  *  receives these events.
  *
  *  @param[in] window The window whose callback to set.
- *  @param[in] cbfun The new callback, or `NULL` to remove the currently set
+ *  @param[in] cbfun The alien callback, or `NULL` to remove the currently set
  *  callback.
  *  @return The previously set callback, or `NULL` if no callback was set or the
  *  library had not been [initialized](@ref intro_init).
@@ -2805,7 +2805,7 @@ GLFWAPI GLFWcharfun glfwSetCharCallback(GLFWwindow* window, GLFWcharfun cbfun);
  *  [key callback](@ref glfwSetKeyCallback) instead.
  *
  *  @param[in] window The window whose callback to set.
- *  @param[in] cbfun The new callback, or `NULL` to remove the currently set
+ *  @param[in] cbfun The alien callback, or `NULL` to remove the currently set
  *  callback.
  *  @return The previously set callback, or `NULL` if no callback was set or an
  *  error occurred.
@@ -2833,7 +2833,7 @@ GLFWAPI GLFWcharmodsfun glfwSetCharModsCallback(GLFWwindow* window, GLFWcharmods
  *  [window focus callback](@ref glfwSetWindowFocusCallback) has been called.
  *
  *  @param[in] window The window whose callback to set.
- *  @param[in] cbfun The new callback, or `NULL` to remove the currently set
+ *  @param[in] cbfun The alien callback, or `NULL` to remove the currently set
  *  callback.
  *  @return The previously set callback, or `NULL` if no callback was set or the
  *  library had not been [initialized](@ref intro_init).
@@ -2860,7 +2860,7 @@ GLFWAPI GLFWmousebuttonfun glfwSetMouseButtonCallback(GLFWwindow* window, GLFWmo
  *  client area of the window.
  *
  *  @param[in] window The window whose callback to set.
- *  @param[in] cbfun The new callback, or `NULL` to remove the currently set
+ *  @param[in] cbfun The alien callback, or `NULL` to remove the currently set
  *  callback.
  *  @return The previously set callback, or `NULL` if no callback was set or the
  *  library had not been [initialized](@ref intro_init).
@@ -2883,7 +2883,7 @@ GLFWAPI GLFWcursorposfun glfwSetCursorPosCallback(GLFWwindow* window, GLFWcursor
  *  the window.
  *
  *  @param[in] window The window whose callback to set.
- *  @param[in] cbfun The new callback, or `NULL` to remove the currently set
+ *  @param[in] cbfun The alien callback, or `NULL` to remove the currently set
  *  callback.
  *  @return The previously set callback, or `NULL` if no callback was set or the
  *  library had not been [initialized](@ref intro_init).
@@ -2909,7 +2909,7 @@ GLFWAPI GLFWcursorenterfun glfwSetCursorEnterCallback(GLFWwindow* window, GLFWcu
  *  wheel or a touchpad scrolling area.
  *
  *  @param[in] window The window whose callback to set.
- *  @param[in] cbfun The new scroll callback, or `NULL` to remove the currently
+ *  @param[in] cbfun The alien scroll callback, or `NULL` to remove the currently
  *  set callback.
  *  @return The previously set callback, or `NULL` if no callback was set or the
  *  library had not been [initialized](@ref intro_init).
@@ -2936,7 +2936,7 @@ GLFWAPI GLFWscrollfun glfwSetScrollCallback(GLFWwindow* window, GLFWscrollfun cb
  *  make a deep copy.
  *
  *  @param[in] window The window whose callback to set.
- *  @param[in] cbfun The new file drop callback, or `NULL` to remove the
+ *  @param[in] cbfun The alien file drop callback, or `NULL` to remove the
  *  currently set callback.
  *  @return The previously set callback, or `NULL` if no callback was set or the
  *  library had not been [initialized](@ref intro_init).
@@ -3133,7 +3133,7 @@ GLFWAPI double glfwGetTime(void);
  *  up from that value.  The value must be a positive finite number less than
  *  or equal to 18446744073.0, which is approximately 584.5 years.
  *
- *  @param[in] time The new value, in seconds.
+ *  @param[in] time The alien value, in seconds.
  *
  *  @remarks The upper limit of the timer is calculated as
  *  floor((2<sup>64</sup> - 1) / 10<sup>9</sup>) and is due to implementations
