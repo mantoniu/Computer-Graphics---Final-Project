@@ -19,17 +19,15 @@ include_directories(
 add_executable(final_project
     final_project/final_project.cpp
     final_project/render/shader.cpp
-    final_project/camera/camera.cpp
-    final_project/Objects/Cube/Cube.cpp
-    final_project/Objects/skybox/SkyBox.cpp
+        final_project/view_points/camera/camera.cpp
+        final_project/3D_objects/Cube/Cube.cpp
+        final_project/3D_objects/skybox/SkyBox.cpp
         final_project/utils/texture_utils.cpp
-        final_project/objects/gltf_object/GltfObject.cpp
-        final_project/light/Light.cpp
+        final_project/3D_objects/gltf_object/GltfObject.cpp
+        final_project/view_points/lights/light/Light.cpp
     final_project/tinygltf_implementation.cpp
-        final_project/objects/graphics_object/GraphicsObject.h
-        final_project/objects/graphics_object/GraphicsObject.cpp
-        final_project/ssao/ssao.cpp
-        final_project/ssao/ssao.h
+        final_project/3D_objects/graphics_object/GraphicsObject.h
+        final_project/3D_objects/graphics_object/GraphicsObject.cpp
         final_project/passes/geometry_pass/GeometryPass.cpp
         final_project/passes/geometry_pass/GeometryPass.h
         final_project/passes/render_pass/RenderPass.cpp
@@ -44,6 +42,11 @@ add_executable(final_project
         final_project/passes/lighting_pass/LightingPass.h
         final_project/passes/depth_pass/DepthPass.cpp
         final_project/passes/depth_pass/DepthPass.h
+        final_project/view_points/lights/spot_light/Spotlight.cpp
+        final_project/view_points/lights/spot_light/Spotlight.h
+        final_project/view_points/lights/LightTypes.h
+        final_project/view_points/view_point/ViewPoint.cpp
+        final_project/view_points/view_point/ViewPoint.h
 )
 
 target_link_libraries(final_project
