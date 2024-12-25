@@ -7,18 +7,20 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 
-ViewPoint::ViewPoint(const glm::vec3 position, const float viewAzimuth, const float viewPolar, const float fov, const float near, const float far) : position(position), viewAzimuth(viewAzimuth), viewPolar(viewPolar), fov(fov), near(near), far(far) {
+ViewPoint::ViewPoint(const glm::vec3 position, const float viewAzimuth, const float viewPolar, const float fov,
+                     const float near, const float far) : position(position), viewAzimuth(viewAzimuth),
+                                                          viewPolar(viewPolar), fov(fov), near(near), far(far) {
 }
 
 glm::vec3 ViewPoint::getLookAt() const {
     return glm::vec3(
-        std::cos(viewPolar) * std::sin(viewAzimuth),
-        std::sin(viewPolar),
-        std::cos(viewPolar) * std::cos(viewAzimuth)
-    ) + getPosition();
+               std::cos(viewPolar) * std::sin(viewAzimuth),
+               std::sin(viewPolar),
+               std::cos(viewPolar) * std::cos(viewAzimuth)
+           ) + getPosition();
 }
 
-glm::vec3 ViewPoint::getPosition() const{
+glm::vec3 ViewPoint::getPosition() const {
     return position;
 }
 
@@ -34,7 +36,7 @@ glm::vec3 ViewPoint::getUp() const {
     return up;
 }
 
-void ViewPoint::setPosition(const glm::vec3 position){
+void ViewPoint::setPosition(const glm::vec3 position) {
     this->position = position;
 }
 
