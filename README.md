@@ -15,7 +15,7 @@ Welcome to the repository of **"Toward a Futuristic Emerald Isle"**, a 3D graphi
 - **Screen-Space Ambient Occlusion (SSAO)**: Enhances the visual quality by simulating light occlusion in tightly packed areas, with its effect deliberately exaggerated for emphasis.
 - **Animations**: Animated objects with detailed textures, such as an alien character.
 - **Infinite Scene**: Seamless exploration with no visible boundaries.
-- **Optimized Performance**: Designed to maintain a minimum framerate of 15 FPS on an NVIDIA 4090 GPU.
+- **Optimized Performance**: Designed to maintain a minimum framerate of 165 FPS on an NVIDIA 4060 GPU.
 
 ---
 
