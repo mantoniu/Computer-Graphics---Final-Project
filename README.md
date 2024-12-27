@@ -32,5 +32,4 @@ Welcome to the repository of **"Toward a Futuristic Emerald Isle"**, a 3D graphi
 ### Installation
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/futuristic-emerald-isle.git
-   cd futuristic-emerald-isle
+   git clone https://github.com/mantoniu/Computer_Graphics-Final_Project
